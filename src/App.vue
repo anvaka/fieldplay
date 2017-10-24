@@ -81,4 +81,7 @@ a.highlighted {
   margin: 7px 0;
   font-size: 24px;
 }
+.ui-container {
+  position: absolute;
+}
 </style>

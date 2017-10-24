@@ -211,15 +211,15 @@ function hex(x) {
   color: secondary-text;
   position: absolute;
   overflow-y: auto;
-  top: control-bar-height;
   left: 0;
   background: window-background;
   width: settings-width;
   border: 1px solid primary-border;
   border-left: none;
   border-top: none;
-  padding: 7px;
+  padding: (7px + control-bar-height) 7px 7px 7px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  max-height: 100%;
 }
 .settings.collapsed {
   display: none;
@@ -325,25 +325,6 @@ a.action {
   font-size: 16px;
 }
 
-a.toggle-settings {
-  position: absolute;
-  right: 8px;
-  color: #999;
-  font-size: 12px;
-}
-.settings.collapsed {
-  height: 24px;
-  width: auto;
-  padding: 0 7px;
-  a.toggle-settings {
-    color: white;
-    position: static;
-    margin: 0;
-    top: 0;
-    left: 0
-  }
-}
-
 .reset {
   text-decoration: none;
   color: white;
@@ -352,16 +333,11 @@ a.toggle-settings {
 @media (max-width: small-screen) {
   .settings {
     width: 100%;
-    top: 42px;
     left: 0;
     .title {
       font-size: 14px;
       text-align: left;
     }
-  }
-  .settings.collapsed {
-    width: 100%;
-    height: 38px;
   }
   .vector-field {
     textarea {
