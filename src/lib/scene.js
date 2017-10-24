@@ -415,8 +415,8 @@ export default function initScene(gl) {
   }
 
   function reset() {
-    var w = canvasRect.width/2;
-    var h = canvasRect.height/2;
+    var w = Math.PI * Math.E * 0.5;
+    var h = Math.PI * Math.E * 0.5;
 
     appState.saveBBox({
       minX: -w,
