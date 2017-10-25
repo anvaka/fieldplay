@@ -23,6 +23,12 @@ import appState from '../lib/appState';
 import bus from '../lib/bus';
 
 export default {
+  mounted() {
+    document.body.addEventListener('keydown', this.onKeyDown, this);
+  },
+  beforeDestroy() {
+    document.body.removeEventListener('keydown', this.onKeyDown, this);
+  },
   data() {
     return {
         paused: false,
@@ -31,6 +37,12 @@ export default {
   },
 
   methods: {
+    onKeyDown(e) {
+      if (e.which === 32 && e.target === document.body) { // ESCAPE
+        this.togglePaused();
+        e.preventDefault();
+      }
+    },
     generateNewFunction() {
       bus.fire('generate-field');
     },

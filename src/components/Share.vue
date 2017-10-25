@@ -41,9 +41,11 @@ export default {
   mounted() {
     bus.on('open-share-dialog', this.openDialog, this);
     this.lastCallTime = new Date();
+    document.body.addEventListener('keydown', this.onKeyDown, this);
   },
   beforeDestroy() {
     bus.off('open-share-dialog', this.openDialog, this);
+    document.body.removeEventListener('keydown', this.onKeyDown, this);
   },
   data() {
     return { 
@@ -55,6 +57,11 @@ export default {
     }
   },
   methods: {
+    onKeyDown(e) {
+      if (e.which === 27) { // ESCAPE
+        this.isOpened = false;
+      }
+    },
     requestShorten() {
       if (isShortened(this.enteredUrl)) {
         this.enteredUrl = getCurrentLink(false);
