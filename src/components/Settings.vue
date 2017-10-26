@@ -58,15 +58,15 @@ Did you forget to add a dot symbol? E.g. <span class='hl'>10</span> should be <s
       <div class='bounding-box'>
         <div class='col title'>bounds</div>
         <div class='row'>
-          <div class='col  center'><input type='number' v-model='minY' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
+          <div class='col  center'><input type='number' v-model.lazy='minY' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
         </div>
         <div class='row'>
-          <div class='col min-x'><input type='number' v-model='minX' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
+          <div class='col min-x'><input type='number' v-model.lazy='minX' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
           <a class='col reset' href='#' @click.prevent='goToOrigin'>go to origin</a>
-          <div class='col max-x'><input type='number' v-model='maxX' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
+          <div class='col max-x'><input type='number' v-model.lazy='maxX' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
         </div>
         <div class='row center'>
-          <div class='col center'><input type='number' v-model='maxY' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
+          <div class='col center'><input type='number' v-model.lazy='maxY' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
         </div>
       </div>
     </form>
