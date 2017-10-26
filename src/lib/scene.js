@@ -115,7 +115,8 @@ export default function initScene(gl) {
     start: nextFrame,
     stop,
     dispose,
-    reset,
+    resetBoundingBox,
+    moveBoundingBox,
 
     setPaused,
 
@@ -140,6 +141,11 @@ export default function initScene(gl) {
     getCanvasRect() {
       // We trust they don't do anything bad with this ...
       return canvasRect;
+    },
+
+    getBoundingBox() {
+      // again, we trust. Maybe to much?
+      return ctx.bbox;
     }
   }
 
@@ -151,6 +157,37 @@ export default function initScene(gl) {
   })
 
   return api;
+
+  function moveBoundingBox(changes) {
+    if (!changes) return;
+    var parsedBoundingBox = Object.assign({}, ctx.bbox);
+
+    assignIfPossible(changes, 'minX', parsedBoundingBox);
+    assignIfPossible(changes, 'minY', parsedBoundingBox);
+    assignIfPossible(changes, 'maxX', parsedBoundingBox);
+    assignIfPossible(changes, 'maxY', parsedBoundingBox);
+
+    // for Y axis changes we need to preserve aspect ration, which means
+    // we also need to change X...
+    if (changes.minY !== undefined || changes.maxY !== undefined) {
+      // adjust values for X
+      var heightChange = Math.abs(parsedBoundingBox.minY - parsedBoundingBox.maxY)/Math.abs(ctx.bbox.minY - ctx.bbox.maxY);
+      var cx = (ctx.bbox.maxX + ctx.bbox.minX)/2;
+      var prevWidth = (ctx.bbox.maxX - ctx.bbox.minX)/2;
+      parsedBoundingBox.minX = cx - prevWidth * heightChange;
+      parsedBoundingBox.maxX = cx + prevWidth * heightChange;
+
+    }
+
+    applyBoundingBox(parsedBoundingBox);
+  }
+
+  function assignIfPossible(change, key, newBoundingBox) {
+    var value = Number.parseFloat(change[key]);
+    if (Number.isFinite(value)) {
+      newBoundingBox[key] = value;
+    }
+  }
 
   function startRecord(capturer) {
     currentCapturer = capturer;
@@ -365,9 +402,9 @@ export default function initScene(gl) {
       sX = savedBBox.maxX - savedBBox.minX;
       sY = savedBBox.maxY - savedBBox.minY;
       // TODO: Not sure if this is really the best way to do it.
-      var ar = width/height;
+      // var ar = width/height;
       tX = width * (savedBBox.minX + savedBBox.maxX)/2;
-      tY = height * (savedBBox.minY + savedBBox.maxY)/2*ar;
+      tY = width * (savedBBox.minY + savedBBox.maxY)/2;
     }
 
     var w2 = sX * width/2;
@@ -394,11 +431,13 @@ export default function initScene(gl) {
     var maxX = clientX(width);
     var maxY = clientY(height);
 
-    var ar = width/height;
-    bbox.minX = minX/width;
-    bbox.minY =  -minY/height / ar;
-    bbox.maxX = maxX/width;
-    bbox.maxY =  -maxY/height / ar;
+    // we divide by width to keep aspect ratio
+    // var ar = width/height;
+    var p = 10000;
+    bbox.minX = Math.round(p * minX/width)/p;
+    bbox.minY = Math.round(p * -minY/width)/p;
+    bbox.maxX = Math.round(p * maxX/width)/p;
+    bbox.maxY = Math.round(p * -maxY/ width)/p;
 
 
     appState.saveBBox(bbox);
@@ -414,16 +453,20 @@ export default function initScene(gl) {
     }
   }
 
-  function reset() {
+  function resetBoundingBox() {
     var w = Math.PI * Math.E * 0.5;
     var h = Math.PI * Math.E * 0.5;
 
-    appState.saveBBox({
+    applyBoundingBox({
       minX: -w,
       minY: -h,
       maxX: w,
       maxY: h
-    }, /* immediate = */ true);
+    })
+  }
+
+  function applyBoundingBox(boundingBox) {
+    appState.saveBBox(boundingBox, /* immediate = */ true);
     restoreBBox();
     // a hack to trigger panzoom event
     panzoom.moveBy(0, 0, false);

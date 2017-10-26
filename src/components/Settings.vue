@@ -10,14 +10,15 @@ function velocity(<span class='type' >vec2</span> p) {
       <textarea ref='codeInput' v-model='vectorField' type='text' rows='3' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
 <pre>  return v;
 }</pre>
-    <div class='error=container'>
-      <pre v-if='error' class='error hl'>{{error}}</pre>
-      <pre v-if='errorDetail' class='error detail'>{{errorDetail}}<span v-if='isFloatError'>
+      <div class='error=container'>
+        <pre v-if='error' class='error hl'>{{error}}</pre>
+        <pre v-if='errorDetail' class='error detail'>{{errorDetail}}<span v-if='isFloatError'>
 Did you forget to add a dot symbol? E.g. <span class='hl'>10</span> should be <span class='hl'>10.</span> and <span class='hl'>42</span> should be <span class='hl'>42.</span>
 </span></pre>
-    </div>
+      </div>
     </div>
     <form class='block' @submit.prevent='onSubmit'>
+      <div class='title'>Settings<a class='reset-all' href='#' @click='reset'>reset all</a> </div>
       <div class='row'>
         <div class='col'>Particle color</div>
         <div class='col full'> 
@@ -40,22 +41,33 @@ Did you forget to add a dot symbol? E.g. <span class='hl'>10</span> should be <s
       </div>
       <div class='row'>
         <div class='col'>Particles count </div>
-        <div class='col full'><input type='text' v-model='particlesCount' @keyup.enter='onSubmit'></div>
+        <div class='col full'><input type='number' :step='particleCountDelta' v-model='particlesCount' @keyup.enter='onSubmit' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
       </div>
       <div class='row'>
         <div class='col'>Fade out speed</div>
-        <div class='col full'><input type='text' v-model='fadeOutSpeed' @keyup.enter='onSubmit'></div>
+        <div class='col full'><input type='number' :step='fadeoutDelta'  v-model='fadeOutSpeed' @keyup.enter='onSubmit' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
       </div>
       <div class='row'>
         <div class='col'>Particle reset probability</div>
-        <div class='col full'><input type='text' v-model='dropProbability' @keyup.enter='onSubmit'></div>
+        <div class='col full'><input type='number' :step='resetProbabilityDelta'  v-model='dropProbability' @keyup.enter='onSubmit' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
       </div>
       <div class='row'>
         <div class='col'>Integration timestep</div>
-        <div class='col full'><input type='text' v-model='timeStep' @keyup.enter='onSubmit'></div>
+        <div class='col full'><input type='number' :step='integrationStepDelta' v-model='timeStep' @keyup.enter='onSubmit' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" ></div>
       </div>
-      <div class='row'>
-        <a class='col reset' href='#' @click='reset'>Reset</a>
+      <div class='bounding-box'>
+        <div class='col title'>bounds</div>
+        <div class='row'>
+          <div class='col  center'><input type='number' v-model='minY' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
+        </div>
+        <div class='row'>
+          <div class='col min-x'><input type='number' v-model='minX' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
+          <a class='col reset' href='#' @click.prevent='goToOrigin'>go to origin</a>
+          <div class='col max-x'><input type='number' v-model='maxX' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
+        </div>
+        <div class='row center'>
+          <div class='col center'><input type='number' v-model='maxY' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
+        </div>
       </div>
     </form>
   </div>
@@ -78,6 +90,7 @@ export default {
   mounted() {
     bus.on('scene-ready', this.onSceneReady, this);
     bus.on('generate-field', this.generateNewFunction, this);
+    bus.on('bbox-change', this.updateBBox, this);
     autosize(this.$refs.codeInput);
 
     if (soundAvailable) this.soundLoader = new SoundLoader(this.$refs.player);
@@ -85,6 +98,7 @@ export default {
   beforeDestroy() {
     bus.off('scene-ready', this.onSceneReady, this);
     bus.off('generate-field', this.generateNewFunction, this);
+    bus.off('bbox-change', this.updateBBox, this);
     autosize.destroy(this.$refs.codeInput);
   },
   data() {
@@ -100,7 +114,9 @@ export default {
       dropProbability: 0,
       timeStep: 0,
       selectedColorMode: 0,
-      soundAvailable: soundAvailable
+      soundAvailable: soundAvailable,
+      minX: 0, minY: 0,
+      maxX: 0, maxY: 0
     };
   },
   watch: {
@@ -132,9 +148,41 @@ export default {
     },
     selectedColorMode(newValue) {
       this.scene.setColorMode(newValue);
+    },
+    minX(newValue) { this.moveBoundingBox('minX', newValue) },
+    maxX(newValue) { this.moveBoundingBox('maxX', newValue) },
+    minY(newValue) { this.moveBoundingBox('minY', newValue) },
+    maxY(newValue) { this.moveBoundingBox('maxY', newValue) },
+  },
+  computed: {
+    particleCountDelta() {
+      return exponentialStep(this.particlesCount);
+    },
+    integrationStepDelta() {
+      var timeStep = this.timeStep;
+      return exponentialStep(timeStep);
+    },
+    resetProbabilityDelta() {
+      return exponentialStep(this.dropProbability);
+    },
+    fadeoutDelta() {
+      var fadeOutSpeed = Number.parseFloat(this.fadeOutSpeed);
+
+      var exp = Math.round(Math.log10(1 % fadeOutSpeed)) ;
+      var dt = Math.pow(10, exp);
+      if (dt + fadeOutSpeed >= 1) {
+        dt /= 10;
+      }
+      return dt;
     }
   },
   methods: {
+    moveBoundingBox(key, value) {
+      if (this.ignoreBbox) {
+        return;
+      } 
+      this.scene.moveBoundingBox({[key]: value});
+    },
     loadSound() {
       if (!this.soundLoader) return;
       this.soundLoader.loadStream(this.soundCloudLink).then(e => {
@@ -149,8 +197,11 @@ export default {
       this.vectorField = generateFunction();
     },
     reset() {
-      // we reset the scene, and let the a.href = # do the rest.
-      this.scene.reset();
+      // we reset the scene bounding box, and let the a.href = # do the rest.
+      this.scene.resetBoundingBox();
+    },
+    goToOrigin() {
+      this.scene.resetBoundingBox();
     },
     onSubmit() {
       if (window.innerWidth < 600) {
@@ -173,6 +224,24 @@ export default {
       this.dropProbability = scene.getDropProbability();
       this.timeStep = scene.getIntegrationTimeStep();
       this.selectedColorMode = scene.getColorMode();
+      this.updateBBox();
+    },
+
+    updateBBox() {
+      this.ignoreBbox = true;
+      var bbox = scene.getBoundingBox();
+      this.minX = bbox.minX;
+      this.maxX = bbox.maxX;
+
+      // Y is weird in my implementation. I know..
+      this.minY = bbox.minY;
+      this.maxY = bbox.maxY;
+      if (this.prevBboxReset) clearTimeout(this.prevBboxReset);
+
+      this.prevBboxReset = setTimeout(() => {
+        this.ignoreBbox = false
+        this.prevBboxReset = 0
+      }, 50);
     },
 
     sendVectorField() {
@@ -188,6 +257,15 @@ export default {
       }
     },
   }
+}
+
+function exponentialStep(value) {
+  var dt = Math.pow(10, Math.floor(Math.log10(value)));
+  if (value - dt === 0) {
+    // This is odd case when you are increasing number, but otherwise it's a good adjustment.
+    return dt/10;
+  }
+  return dt;
 }
 
 function toColorString({r, g, b, a}) {
@@ -224,6 +302,12 @@ function hex(x) {
 .settings.collapsed {
   display: none;
 }
+
+.title {
+  margin-bottom: 7px;
+  color: primary-text;
+  font-size: 18px;
+}
 .block {
   .col {
     align-items: center;
@@ -236,7 +320,8 @@ function hex(x) {
     margin-left: 14px;
   }
 
-  input[type='text'] {
+  input[type='text'],
+  input[type='number'] {
     background: transparent;
     color: primary-text;
     border: 1px solid transparent;
@@ -253,8 +338,15 @@ function hex(x) {
 }
 form.block {
   margin-top: 12px;
-  border-top: 1px solid secondary-border;
   padding-top: 10px;
+
+  .title {
+    a {
+      float: right;
+      font-size: 12px;
+      margin-right: 7px;
+    }
+  }
 }
 .vector-field {
   pre {
@@ -280,12 +372,6 @@ form.block {
     }
   }
 
-  .title {
-    text-align: center;
-    margin-bottom: 7px;
-    color: primary-text;
-    font-size: 18px;
-  }
   textarea {
     max-height: 180px;
     background: transparent;
@@ -309,6 +395,11 @@ form.block {
   display: flex;
   flex-direction: row;
 }
+
+.center {
+  justify-content: center;
+}
+
 audio {
   width: 100%;
 }
@@ -328,6 +419,33 @@ a.action {
 .reset {
   text-decoration: none;
   color: white;
+  display: flex;
+  justify-content: center;
+}
+
+.bounding-box {
+  position: relative;
+  .title {
+    position: absolute;
+    bottom: 0;
+    font-size: 12px;
+    left: 0;
+    color: #435970;
+  }
+  .reset {
+    font-size: 16px;
+  }
+
+  input[type='number'] {
+    width: 100px;
+    margin: 0;
+    font-size: 12px;
+    text-align: center;
+    color: secondary-text;
+  }
+  .max-x {
+    justify-content: flex-end;
+  }
 }
 
 @media (max-width: small-screen) {

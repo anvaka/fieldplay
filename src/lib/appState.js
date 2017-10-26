@@ -9,8 +9,7 @@ var currentState = qs.get();
 // v.y = p.x;
 // `;
 var defaultVectorField = `v.x = 0.1 * p.y;
-v.y = -0.2 * p.y;
-`
+v.y = -0.2 * p.y;`
 
 var pendingSave;
 var defaults = {
@@ -119,11 +118,12 @@ function getBBox() {
 
   let w2 = w/2;
   let h2 = h/2;
+  var p = 10000;
   return {
-    minX: cx - w2,
-    maxX: cx + w2,
-    minY: cy - h2,
-    maxY: cy + h2
+    minX: Math.round(p * (cx - w2))/p,
+    maxX: Math.round(p * (cx + w2))/p,
+    minY: Math.round(p * (cy - h2))/p,
+    maxY: Math.round(p * (cy + h2))/p
   };
 }
 
@@ -147,6 +147,8 @@ function saveReally(bbox) {
     w: (bbox.maxX - bbox.minX),
     h: (bbox.maxX - bbox.minX)
   }
+
+  if (bbox.w <= 0 || bbox.h <= 0) return;
 
   qs.set(bbox);
 
