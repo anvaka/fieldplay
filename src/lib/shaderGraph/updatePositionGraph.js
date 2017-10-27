@@ -1,7 +1,6 @@
 import BaseShaderNode from './BaseShaderNode';
 import TexturePositionNode from './TexturePositionNode';
 import renderNodes from './renderNodes';
-import ColorModes from '../programs/colorModes';
 import UserDefinedVelocityFunction from './UserDefinedVelocityFunction';
 import PanzoomTransform from './PanzoomTransform';
 import RungeKuttaIntegrator from './RungeKuttaIntegrator';
@@ -38,13 +37,7 @@ void main() {
   }
 
   getFragmentShader() {
-    let nodes;
-    if (this.colorMode) {
-      nodes = this.getColorShaderNodes(this.colorMode);
-    } else {
-      nodes = this.getUpdatePositionShaderNodes();
-    }
-
+    var nodes = this.getUpdatePositionShaderNodes();
     return renderNodes(nodes);
   }
 
@@ -62,28 +55,6 @@ void main() {
       },
       this.writeComputedPosition
     ]
-  }
-
-
-  getColorShaderNodes(colorMode) {
-    return [
-      this.readStoredPosition,
-      this.dropParticles,
-      this.udfVelocity,
-      this.integratePositions,
-      {
-        getMainBody() {
-          if (colorMode === ColorModes.ANGLE) {
-            return `
-   gl_FragColor = encodeFloatRGBA(atan(velocity.y, velocity.x)); 
-`
-          }
-          return `
-  gl_FragColor = encodeFloatRGBA(length(velocity));
-`
-        }
-      }
-    ];
   }
 }
 

@@ -29,6 +29,8 @@ export default function updatePositionProgram(ctx) {
 
     if (updateProgram) updateProgram.unload();
     updateProgram = newProgram;
+
+    if (ctx.colorMode === ColorMode.VELOCITY) readVelocity.requestSpeedUpdate();
   }
   
   function onParticleInit(x, y) {

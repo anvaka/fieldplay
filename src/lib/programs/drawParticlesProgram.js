@@ -12,7 +12,6 @@ export default function drawParticlesProgram(ctx) {
   var numParticles;
 
   var currentVectorField = '';
-  var currentColorMode = ctx.colorMode;
   var updatePositionProgram = makeUpdatePositionProgram(ctx);
   var audioProgram;
 
@@ -29,14 +28,19 @@ export default function drawParticlesProgram(ctx) {
 
   function initPrograms() {
     // need to update the draw graph because color mode shader has changed.
-    const drawGraph = new DrawParticleGraph(currentColorMode);
-    if (drawProgram) drawProgram.unload();
-    drawProgram = util.createProgram(gl, drawGraph.getVertexShader(currentVectorField), drawGraph.getFragmentShader());
+    initDrawProgram();
 
     if (config.isAudioEnabled) {
       if (audioProgram) audioProgram.dispose();
       audioProgram = createAudioProgram(ctx);
     }
+  }
+
+  function initDrawProgram() {
+    if (drawProgram) drawProgram.unload();
+
+    const drawGraph = new DrawParticleGraph(ctx.colorMode);
+    drawProgram = util.createProgram(gl, drawGraph.getVertexShader(currentVectorField), drawGraph.getFragmentShader());
   }
 
   function updateParticlesPositions() {
@@ -49,9 +53,8 @@ export default function drawParticlesProgram(ctx) {
   }
 
 
-  function updateColorMode(colorMode) {
-    currentColorMode = colorMode;
-    initPrograms();
+  function updateColorMode() {
+    initDrawProgram();
   }
 
   function updateCode(vfCode) {
@@ -59,9 +62,7 @@ export default function drawParticlesProgram(ctx) {
     currentVectorField = vfCode;
     updatePositionProgram.updateCode(vfCode);
 
-    const drawGraph = new DrawParticleGraph(currentColorMode);
-    if (drawProgram) drawProgram.unload();
-    drawProgram = util.createProgram(gl, drawGraph.getVertexShader(currentVectorField), drawGraph.getFragmentShader());
+    initDrawProgram();
   }
 
 
