@@ -14,6 +14,7 @@
 export function encodeFloatRGBA(val, out, writeOffset) {
   if (val == 0.0) {
     out[writeOffset + 0] = 0; out[writeOffset + 1] = 0; out[writeOffset + 2] = 0; out[writeOffset + 3] = 0;
+    return;
   }
 
   var mag = Math.abs(val);

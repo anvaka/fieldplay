@@ -1,25 +1,29 @@
 import initScene from './scene';
-// import mediaRecorder from './nativeMediaRecorder';
 import bus from './bus';
 
 var canvas = document.getElementById('scene');
-canvas.width = window.innerWidth;
-canvas.height =  window.innerHeight;
-var ctxOptions = {antialiasing: false };
 
-var gl = canvas.getContext('webgl', ctxOptions) ||
-        canvas.getContext('experimental-webgl', ctxOptions);
+// Canvas may not be available in test run
+if (canvas) initWebGL(canvas);
 
-if (gl) {
-  window.webgGLEnabled = true;
-  var scene = initScene(gl);
-  scene.start();
-  // TODO: too bad to plop stuff onto window?
-  window.scene = scene;
-} else {
-  window.webgGLEnabled = false;
+function initWebGL(canvas) {
+  canvas.width = window.innerWidth;
+  canvas.height =  window.innerHeight;
+  var ctxOptions = {antialiasing: false };
+
+  var gl = canvas.getContext('webgl', ctxOptions) ||
+          canvas.getContext('experimental-webgl', ctxOptions);
+
+  if (gl) {
+    window.webgGLEnabled = true;
+    var scene = initScene(gl);
+    scene.start();
+    // TODO: too bad to plop stuff onto window?
+    window.scene = scene;
+  } else {
+    window.webgGLEnabled = false;
+  }
 }
-
 require.ensure('@/main.js', () => {
   require('@/main.js');
 })
