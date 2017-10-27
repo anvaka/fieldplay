@@ -52,6 +52,8 @@ varying vec2 v_tex_pos;
     return `
     if (u_out_coordinate == 0) gl_FragColor = encodeFloatRGBA(pos.x);
     else if (u_out_coordinate == 1) gl_FragColor = encodeFloatRGBA(pos.y);
+    else if (u_out_coordinate == 6) gl_FragColor = encodeFloatRGBA(velocity.x);
+    else if (u_out_coordinate == 7) gl_FragColor = encodeFloatRGBA(velocity.y);
 `
   }
 }

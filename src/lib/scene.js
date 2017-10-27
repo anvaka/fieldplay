@@ -201,7 +201,7 @@ export default function initScene(gl) {
     var mode = parseInt(x, 10);
     drawProgram.updateColorMode(mode);
     appState.setColorMode(mode);
-    ctx.currentColorMode = mode;
+    ctx.colorMode = mode;
   }
 
   function getColorMode() {

@@ -1,13 +1,9 @@
 import util from '../gl-utils';
 import DrawParticleGraph from '../shaderGraph/DrawParticleGraph';
-import defaultColorProgram from './colorProgram';
-import uniformColorProgram from './uniformColorProgram';
 import makeUpdatePositionProgram from './updatePositionProgram';
 import { encodeFloatRGBA } from '../utils/floatPacking.js';
 import config from '../config';
 import createAudioProgram from './audioProgram';
-
-import ColorMode from './colorModes';
 
 export default function drawParticlesProgram(ctx) {
   var gl = ctx.gl;
@@ -20,7 +16,7 @@ export default function drawParticlesProgram(ctx) {
   var updatePositionProgram = makeUpdatePositionProgram(ctx);
   var audioProgram;
 
-  var drawProgram, colorProgram;
+  var drawProgram;
   initPrograms();
 
   return {
@@ -32,13 +28,6 @@ export default function drawParticlesProgram(ctx) {
   }
 
   function initPrograms() {
-    let isUniformColor = currentColorMode === ColorMode.UNIFORM;
-    if (colorProgram) colorProgram.dispose();
-    colorProgram = isUniformColor ? uniformColorProgram(ctx) : defaultColorProgram(ctx, currentColorMode);
-
-    colorProgram.updateCode(currentVectorField);
-    colorProgram.onParticleInit();
-
     // need to update the draw graph because color mode shader has changed.
     const drawGraph = new DrawParticleGraph(currentColorMode);
     if (drawProgram) drawProgram.unload();
@@ -57,23 +46,18 @@ export default function drawParticlesProgram(ctx) {
     if (audioProgram) audioProgram.updateTextures();
 
     updatePositionProgram.updateParticlesPositions();
-    colorProgram.updateParticlesPositions(updatePositionProgram);
-
-    updatePositionProgram.commitUpdate();
   }
 
 
   function updateColorMode(colorMode) {
     currentColorMode = colorMode;
     initPrograms();
-
   }
 
   function updateCode(vfCode) {
     ctx.frame = 0;
     currentVectorField = vfCode;
     updatePositionProgram.updateCode(vfCode);
-    colorProgram.updateCode(vfCode);
 
     const drawGraph = new DrawParticleGraph(currentColorMode);
     if (drawProgram) drawProgram.unload();
@@ -104,7 +88,6 @@ export default function drawParticlesProgram(ctx) {
     particleIndexBuffer = util.createBuffer(gl, particleIndices);
 
     updatePositionProgram.onParticleInit(particleStateX, particleStateY);
-    colorProgram.onParticleInit();
   }
 
   function drawParticles() {
@@ -113,8 +96,7 @@ export default function drawParticlesProgram(ctx) {
   
     util.bindAttribute(gl, particleIndexBuffer, program.a_index, 1);
     
-    updatePositionProgram.bindPositionTexturesToProgram(program);
-    colorProgram.bindColorTextures(program, updatePositionProgram);
+    updatePositionProgram.prepareToDraw(program);
   
     gl.uniform1f(program.u_h, ctx.integrationTimeStep);
     gl.uniform1f(program.frame, ctx.frame);

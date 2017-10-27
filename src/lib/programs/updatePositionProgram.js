@@ -1,5 +1,7 @@
 import util from '../gl-utils';
 import UpdatePositionGraph from '../shaderGraph/updatePositionGraph';
+import ColorMode from './colorModes';
+import makeReadProgram from './colorProgram';
 
 const particlePositionShaderCodeBuilder = new UpdatePositionGraph();
 
@@ -8,13 +10,14 @@ export default function updatePositionProgram(ctx) {
   var readTextures, writeTextures;
   var particleStateResolution;
   var updateProgram;
+  var uniformParticleColor = { r: 77/255, g: 188/255, b: 201/255, a: 1  };
+  var readVelocity = makeReadProgram(ctx);
 
   return {
     updateCode,
     updateParticlesPositions,
     onParticleInit,
-    bindPositionTexturesToProgram,
-    commitUpdate
+    prepareToDraw,
   };
 
   function updateCode(vectorField) {
@@ -44,17 +47,16 @@ export default function updatePositionProgram(ctx) {
 
     if (writeTextures) writeTextures.dispose();
     writeTextures = textureCollection(gl, dimensions, particleStateResolution);
+
+    readVelocity.onParticleInit();
   }
 
-  function bindPositionTexturesToProgram(program) {
+  function prepareToDraw(program) {
+    var colorMode = ctx.colorMode;
+    if (colorMode === ColorMode.UNIFORM) gl.uniform4f(program.u_particle_color, uniformParticleColor.r, uniformParticleColor.g, uniformParticleColor.b, uniformParticleColor.a);
+    else if (colorMode === ColorMode.VELOCITY) readVelocity.setColorMinMax(program);
+
     readTextures.bindTextures(gl, program);
-  }
-
-  function commitUpdate() {
-    // swap the particle state textures so the new one becomes the current one
-    var temp = readTextures;
-    readTextures = writeTextures;
-    writeTextures = temp;
   }
 
   function updateParticlesPositions() {
@@ -89,6 +91,15 @@ export default function updatePositionProgram(ctx) {
       gl.viewport(0, 0, particleStateResolution, particleStateResolution);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
     }
+
+    if (ctx.colorMode === ColorMode.VELOCITY) {
+      readVelocity.updateParticlesPositions(program);
+    }
+
+    // swap the particle state textures so the new one becomes the current one
+    var temp = readTextures;
+    readTextures = writeTextures;
+    writeTextures = temp;
   }
 }
 
