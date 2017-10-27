@@ -37,24 +37,20 @@ void main() {
   }
 
   getFragmentShader() {
-    var nodes = this.getUpdatePositionShaderNodes();
-    return renderNodes(nodes);
-  }
-
-  getUpdatePositionShaderNodes() {
-    return [
+    var nodes = [
       this.readStoredPosition,
       this.dropParticles,
       this.udfVelocity,
       this.integratePositions, {
         getMainBody() {
           return `
-  pos = pos + velocity;
+  vec2 newPos = pos + velocity;
   `
         }
       },
       this.writeComputedPosition
-    ]
+    ];
+    return renderNodes(nodes);
   }
 }
 

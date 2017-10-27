@@ -33,7 +33,7 @@ vec2 rotate(vec2 p,float a) {
 // TODO: This will change. Don't use it.
 float audio(float index) {
   float rgbI = floor(index/4.);
-  vec2 txPos = vec2(fract(rgbI / 8.), floor(rgbI / 8.) / 8.);
+  vec2 txPos = vec2(fract(rgbI / 5.), floor(rgbI / 5.) / 5.);
   vec4 rgba = texture2D(u_audio, txPos);
   
   float offset = mod(index, 4.);
