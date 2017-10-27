@@ -28,6 +28,7 @@ var CCapture;
 var currentCapturer;
 
 window.startRecord = startRecord;
+window.isRecording = false;
 
 function startRecord(url) {
   if (!CCapture) {
@@ -64,6 +65,7 @@ function startRecord(url) {
       ],
   });
 
+  window.isRecording = true;
   currentCapturer.start();
   bus.fire('start-record', currentCapturer)
 }
@@ -73,6 +75,7 @@ function ffmpegScriptLoaded() {
 }
 
 function stopRecord() {
+  window.isRecording = false;
   bus.fire('stop-record', currentCapturer)
   currentCapturer.stop();
   currentCapturer.save();

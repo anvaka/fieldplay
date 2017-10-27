@@ -28,7 +28,8 @@ function audioProgram(ctx) {
     if (!audioDirty) return;
     audioDirty = false;
 
-    var width = 8, height = 8;
+    // TODO: This should come from fftSize?
+    var width = 5, height = 5;
     gl.bindTexture(gl.TEXTURE_2D, audioTexture);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, audioBuffer);
     gl.bindTexture(gl.TEXTURE_2D, null);
