@@ -11,9 +11,11 @@
     </div>
     <div v-if='webGLEnabled'>
       <ruler></ruler>
+      <a href='#' @click.prevent='aboutVisible = !aboutVisible' class='about-link'>about...</a>
       <settings :scene='scene'></settings>
       <controls></controls>
       <share></share>
+      <about @close='aboutVisible = false' v-if='aboutVisible'></about>
     </div>
   </div>
 </template>
@@ -23,6 +25,7 @@ import Ruler from './components/Ruler';
 import Settings from './components/Settings';
 import Controls from './components/Controls';
 import Share from './components/Share';
+import About from './components/About';
 import bus from './lib/bus';
 
 export default {
@@ -34,14 +37,16 @@ export default {
   data() {
     return {
       scene: null,
-      webGLEnabled: window.webgGLEnabled
+      webGLEnabled: window.webgGLEnabled,
+      aboutVisible: false
     };
   },
   components: {
     Ruler,
     Settings,
     Controls,
-    Share
+    Share,
+    About
   },
 
   beforeDestroy() {
@@ -65,8 +70,7 @@ export default {
 .no-webgl {
   width: 100%;
   color: hsla(215, 37%, 55%, 1);
-  flex-direction: column;
-  text-align: center;
+  flex-direction: column; text-align: center;
   padding: 12px;
 }
 a {
@@ -83,5 +87,15 @@ a.highlighted {
 }
 .ui-container {
   position: absolute;
+}
+a.about-link {
+  position: absolute;
+  left: 7px;
+  bottom: 26px;
+}
+@media (max-width: small-screen) {
+  a.about-link {
+    bottom: 14px;
+  }
 }
 </style>

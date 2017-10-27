@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class='share-container'><a href='#' @click.prevent='openDialog' class='open-share-dialog'>Share</a></div>
+    <div class='share-container'><a href='#' @click.prevent='openDialog' class='open-share-dialog'>...share</a></div>
     <div v-if='isOpened' class='share-dialog' @click='hide'>
       <div class='share-window' ref='shareWindow'>
         <h2>Share link</h2>
