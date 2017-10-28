@@ -38,6 +38,7 @@ export default function initScene(gl) {
   var currentCapturer = null;
 
   // TODO: It feels like bounding box management needs to be moved out from here.
+  // TODO: bbox needs to be a class with width/height properties.
   var bbox = appState.getBBox() || {};
   var currentPanZoomTransform = {
     scale: 1,

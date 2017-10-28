@@ -10,6 +10,7 @@
       </div>
     </div>
     <div v-if='webGLEnabled'>
+      <vector-view v-if='vectorLinesEnabled'></vector-view>
       <ruler></ruler>
       <a href='#' @click.prevent='aboutVisible = !aboutVisible' class='about-link'>about...</a>
       <settings :scene='scene'></settings>
@@ -27,6 +28,8 @@ import Controls from './components/Controls';
 import Share from './components/Share';
 import About from './components/About';
 import bus from './lib/bus';
+import VectorView from './components/VectorView';
+import config from './lib/config';
 
 export default {
   name: 'app',
@@ -35,10 +38,12 @@ export default {
     bus.fire('scene-ready', window.scene);
   },
   data() {
+
     return {
       scene: null,
       webGLEnabled: window.webgGLEnabled,
-      aboutVisible: false
+      aboutVisible: false,
+      vectorLinesEnabled: config.vectorLinesEnabled
     };
   },
   components: {
@@ -46,7 +51,8 @@ export default {
     Settings,
     Controls,
     Share,
-    About
+    About,
+    VectorView
   },
 
   beforeDestroy() {

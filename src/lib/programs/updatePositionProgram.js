@@ -2,6 +2,10 @@ import util from '../gl-utils';
 import UpdatePositionGraph from '../shaderGraph/updatePositionGraph';
 import ColorMode from './colorModes';
 import makeReadProgram from './colorProgram';
+import textureCollection from '../utils/textureCollection';
+import makeStatCounter from '../utils/makeStatCounter';
+import {decodeFloatRGBA} from '../utils/floatPacking';
+import bus from '../bus';
 
 const particlePositionShaderCodeBuilder = new UpdatePositionGraph();
 
@@ -12,6 +16,14 @@ export default function updatePositionProgram(ctx) {
   var updateProgram;
   var uniformParticleColor = { r: 77/255, g: 188/255, b: 201/255, a: 1  };
   var readVelocity = makeReadProgram(ctx);
+
+  // If someone needs to get vectors out from the GPU, they send a `vector-lines-request`
+  // over the bus. This request is delayed until next compute frame. Once it is handled,
+  // we send them back response with calculated vectors.
+  var pendingVectorLines;
+
+  // TODO: need to make sure we are not leaking.
+  bus.on('vector-lines-request', putVectorLinesRequestIntoQueue);
 
   return {
     updateCode,
@@ -94,8 +106,14 @@ export default function updatePositionProgram(ctx) {
       gl.drawArrays(gl.TRIANGLES, 0, 6);
     }
 
+    // TODO: I think I need to keep this time-bound
     if (ctx.colorMode === ColorMode.VELOCITY) {
       readVelocity.updateParticlesPositions(program);
+    }
+
+    if (pendingVectorLines) {
+      processVectorLinesRequest(program);
+      pendingVectorLines = null;
     }
 
     // swap the particle state textures so the new one becomes the current one
@@ -103,42 +121,84 @@ export default function updatePositionProgram(ctx) {
     readTextures = writeTextures;
     writeTextures = temp;
   }
-}
 
-function textureCollection(gl, dimensions, particleStateResolution) {
-  var textures = dimensions.map((d, index) => {
-    var textureInfo = {
-      texture: util.createTexture(gl, gl.NEAREST, d.particleState, particleStateResolution, particleStateResolution),
-      index: index,
-      name: d.name
+  function putVectorLinesRequestIntoQueue(request) {
+    pendingVectorLines = request;
+  }
+
+  function processVectorLinesRequest(program) {
+    var dimensions = [{
+      name: 'x',
+      particleState: pendingVectorLines.x
+    }, {
+      name: 'y',
+      particleState: pendingVectorLines.y
+    }];
+
+    // We create temporary textures and load requested positions in there
+    var resolutionOfParticlesInRequest = pendingVectorLines.resolution;
+    var numParticles = resolutionOfParticlesInRequest * resolutionOfParticlesInRequest;
+
+    var texturesForRead = textureCollection(gl, dimensions, resolutionOfParticlesInRequest);
+    var texturesForWrite = textureCollection(gl, dimensions, resolutionOfParticlesInRequest);
+
+    texturesForRead.bindTextures(gl, program);
+
+    // Then we request coordinates out from GPU for each dimension
+    var writeInfo = texturesForWrite.get(0);
+    gl.uniform1i(program.u_out_coordinate, 6); // v_x
+
+    util.bindFramebuffer(gl, ctx.framebuffer, writeInfo.texture);
+    gl.viewport(0, 0, resolutionOfParticlesInRequest, resolutionOfParticlesInRequest);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+    var velocity_x = new Uint8Array(numParticles * 4);
+    gl.readPixels(0, 0, resolutionOfParticlesInRequest, resolutionOfParticlesInRequest, gl.RGBA, gl.UNSIGNED_BYTE, velocity_x);
+
+    gl.uniform1i(program.u_out_coordinate, 7); // v_y
+    writeInfo = texturesForWrite.get(1);
+    util.bindFramebuffer(gl, ctx.framebuffer, writeInfo.texture);
+    gl.viewport(0, 0, resolutionOfParticlesInRequest, resolutionOfParticlesInRequest);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+    var velocity_y = new Uint8Array(numParticles * 4);
+    gl.readPixels(0, 0, resolutionOfParticlesInRequest, resolutionOfParticlesInRequest, gl.RGBA, gl.UNSIGNED_BYTE, velocity_y);
+
+    texturesForWrite.dispose();
+    texturesForRead.dispose();
+
+    var xStats = makeStatCounter();
+    var yStats = makeStatCounter();
+
+    var decoded_velocity_x = new Float32Array(numParticles);
+    var decoded_velocity_y = new Float32Array(numParticles);
+    for(var i = 0; i < velocity_y.length; i+=4) {
+      var idx = i/4;
+      var vx = readFloat(velocity_x, i);
+      var vy = readFloat(velocity_y, i);
+      decoded_velocity_x[idx] = vx;
+      decoded_velocity_y[idx] = vy;
+      xStats.add(vx);
+      yStats.add(vy);
     }
 
-    return textureInfo;
-  })
+    var vectorLineInfo = {
+      xStats,
+      yStats,
+      decoded_velocity_x,
+      decoded_velocity_y,
+      resolution: resolutionOfParticlesInRequest
+    };
 
-  return {
-    dispose,
-    bindTextures,
-    assignProgramUniforms,
-    length: dimensions.length,
-    textures,
-    get(i) { return textures[i]; }
+    bus.fire('vector-line-ready', vectorLineInfo);
   }
+}
 
-  function assignProgramUniforms(program) {
-    textures.forEach(tInfo => {
-      gl.uniform1i(program['u_particles_' + tInfo.name], tInfo.index);
-    });
-  }
-
-  function dispose() {
-    textures.forEach(tInfo => gl.deleteTexture(tInfo.texture));
-  }
-
-  function bindTextures(gl, program) {
-    textures.forEach((tInfo) => {
-      util.bindTexture(gl, tInfo.texture, tInfo.index);
-      gl.uniform1i(program['u_particles_' + tInfo.name], tInfo.index);
-    })
-  }
+function readFloat(buffer, offset) {
+    return decodeFloatRGBA(
+      buffer[offset + 0],
+      buffer[offset + 1],
+      buffer[offset + 2],
+      buffer[offset + 3]
+    );
 }

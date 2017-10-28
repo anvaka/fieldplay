@@ -1,22 +1,24 @@
 import util from '../gl-utils';
 import bus from '../bus';
 import {decodeFloatRGBA} from '../utils/floatPacking';
+import config from '../config';
+import makeStatCounter from '../utils/makeStatCounter';
 
 const OUT_V_X = 6;
 const OUT_V_Y = 7;
-
 /**
  * This program allows to change color of each particle. It works by
  * reading current velocities into a texture from the framebuffer. Once
  * velocities are read, it checks velocity scale and passes it to a draw program.
  */
 export default function colorProgram(ctx) {
-  var maxV, minV, speedNeedsUpdate = true;
+  var speedNeedsUpdate = true;
   var {gl} = ctx;
   var velocity_y_texture, velocity_x_texture;
   var particleStateResolution;
   var pendingSpeedUpdate;
   var numParticles;
+  var velocityCounter = makeStatCounter();
   var velocity_x;
   var velocity_y;
 
@@ -56,7 +58,7 @@ export default function colorProgram(ctx) {
   }
 
   function setColorMinMax(program) {
-    gl.uniform2f(program.u_velocity_range, minV, maxV);
+    gl.uniform2f(program.u_velocity_range, velocityCounter.getMin(), velocityCounter.getMax());
   }
 
   function onParticleInit() {
@@ -95,15 +97,13 @@ export default function colorProgram(ctx) {
   }
 
   function updateMinMax() {
-    maxV = Number.NEGATIVE_INFINITY;
-    minV = Number.POSITIVE_INFINITY;
+    velocityCounter.reset();
     // TODO: Do I want this to be async?
     for(var i = 0; i < velocity_y.length; i+=4) {
       var vx = readFloat(velocity_x, i);
       var vy = readFloat(velocity_y, i);
       var v = Math.sqrt(vx * vx + vy * vy);
-      if (v > maxV) maxV = v;
-      if (v < minV) minV = v;
+      velocityCounter.add(v);
     }
   }
 }
