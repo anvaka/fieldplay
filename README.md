@@ -5,12 +5,10 @@ This is a placeholder for vector fields exploration. Will be available soon.
 ## What?
 
 Imagine you have a set of points on the plain. If you assign a vector for
-every point, you get a construct, which scientsts call "Vector field".
-
+every point, you get a construct, which scientists call "Vector field".
 
 And before you think to yourself "boring" and leave this page, please give me
 couple more seconds to convince you otherwise.
-
 
 Let's assign to every point on a grid a vector. Let's say `(1, 0)`, which means
 we have an arrow, with size 1, and it points to the right:
