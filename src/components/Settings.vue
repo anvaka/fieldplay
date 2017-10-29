@@ -150,6 +150,7 @@ export default {
     bus.on('scene-ready', this.onSceneReady, this);
     bus.on('generate-field', this.generateNewFunction, this);
     bus.on('bbox-change', this.updateBBox, this);
+    bus.on('glsl-parser-result-changed', this.updateParserResults, this);
     autosize(this.$refs.codeInput);
 
     if (soundAvailable) this.soundLoader = new SoundLoader(this.$refs.player);
@@ -158,6 +159,7 @@ export default {
     bus.off('scene-ready', this.onSceneReady, this);
     bus.off('generate-field', this.generateNewFunction, this);
     bus.off('bbox-change', this.updateBBox, this);
+    bus.off('glsl-parser-result-changed', this.updateParserResults, this);
     autosize.destroy(this.$refs.codeInput);
   },
   data() {
@@ -187,7 +189,7 @@ export default {
   },
   watch: {
     vectorField(newValue, oldValue) {
-      // console.log(newValue, oldValue);
+      console.log(newValue, oldValue);
       // TODO: this seem to be causing double initialization
       if (this.pendingSetCode) {
         clearTimeout(this.pendingSetCode);
@@ -290,6 +292,7 @@ export default {
       this.dropProbability = scene.getDropProbability();
       this.timeStep = scene.getIntegrationTimeStep();
       this.selectedColorMode = scene.getColorMode();
+      this.updateParserResults(scene.getLastParserResult());
       this.updateBBox();
     },
 
@@ -311,17 +314,21 @@ export default {
     },
 
     sendVectorField() {
-      let result = this.scene.updateVectorField(this.vectorField);
-      if (result && result.error) {
-        this.error = result.error;
-        this.errorDetail = result.errorDetail;
-        this.isFloatError = result.isFloatError;
+      let parserResult = this.scene.updateVectorField(this.vectorField);
+      this.updateParserResults(parserResult);
+    },
+
+    updateParserResults(parserResult) {
+      if (parserResult && parserResult.error) {
+        this.error = parserResult.error;
+        this.errorDetail = parserResult.errorDetail;
+        this.isFloatError = parserResult.isFloatError;
       } else {
         this.error = '';
         this.errorDetail = '';
         this.isFloatError = false;
       }
-    },
+    }
   }
 }
 

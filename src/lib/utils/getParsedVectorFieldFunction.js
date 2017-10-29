@@ -2,9 +2,11 @@
  * This module parses user defined vector field code.
  */
 
-// TODO: This is naive parser that is being used before
+import bus from '../bus';
+
+// This is naive parser that is being used before
 // main `glsl-parser` is loaded asynchronously. This parser assumes
-// there are no errors, but maybe I should be more careful here.
+// there are no errors (TODO: maybe I should be more careful here?)
 var glslParser = {
   check(code) {
     return {
@@ -53,6 +55,7 @@ return v;
 require.ensure('glsl-parser', () => {
   // ... and replace the naive parser with the real one, when ready.
   glslParser = require('glsl-parser');
+  bus.fire('glsl-parser-ready');
 })
 
 

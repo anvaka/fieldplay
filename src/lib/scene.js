@@ -35,6 +35,7 @@ export default function initScene(gl) {
   // This will trigger frame-by-frame recording (it is slow). To stop it, call window.stopRecord();
   bus.on('start-record', startRecord);
   bus.on('stop-record', stopRecord);
+  bus.on('glsl-parser-ready', validateCode);
   var currentCapturer = null;
 
   // TODO: It feels like bounding box management needs to be moved out from here.
@@ -107,6 +108,10 @@ export default function initScene(gl) {
   var screenProgram = createScreenProgram(ctx);
   var drawProgram = createDrawParticlesProgram(ctx);
 
+  // For delayed parsing result verification (e.g. when vue is loaded it
+  // can request us to see if there were any errors)
+  var parserResult;
+
   loadCodeFromAppState();
 
   // particles
@@ -139,6 +144,8 @@ export default function initScene(gl) {
     setColorMode,
     getColorMode,
 
+    getLastParserResult,
+
     getCanvasRect() {
       // We trust they don't do anything bad with this ...
       return canvasRect;
@@ -158,6 +165,10 @@ export default function initScene(gl) {
   })
 
   return api;
+
+  function getLastParserResult() {
+    return parserResult && parserResult.error;
+  }
 
   function moveBoundingBox(changes) {
     if (!changes) return;
@@ -288,7 +299,7 @@ export default function initScene(gl) {
   }
 
   function updateVectorField(vectorFieldCode) {
-    if (vectorFieldCode === currentVectorFieldCode) return;
+    if (vectorFieldCode === currentVectorFieldCode) return getLastParserResult();
 
     let result = trySetNewCode(vectorFieldCode);
     if (result && result.error) return result;
@@ -297,9 +308,14 @@ export default function initScene(gl) {
     appState.saveCode(vectorFieldCode);
   }
 
+  function validateCode() {
+    parserResult = getParsedVectorFieldFunction(currentVectorFieldCode);
+    bus.fire('glsl-parser-result-changed', parserResult.error);
+  }
+
   function trySetNewCode(vectorFieldCode) {
     // step 1 - run through parser
-    var parserResult = getParsedVectorFieldFunction(vectorFieldCode);
+    parserResult = getParsedVectorFieldFunction(vectorFieldCode);
 
     if (parserResult.error) {
       return parserResult.error;
