@@ -4,9 +4,9 @@
 
 import bus from '../bus';
 
-// This is naive parser that is being used before
-// main `glsl-parser` is loaded asynchronously. This parser assumes
-// there are no errors (TODO: maybe I should be more careful here?)
+// This is naive parser that is being used until the real `glsl-parser`
+// is loaded asynchronously. This parser assumes there are no errors
+// TODO: maybe I should be more careful here?
 var glslParser = {
   check(code) {
     return {
@@ -16,7 +16,17 @@ var glslParser = {
       }
     };
   }
-}
+};
+
+// glsl-parser is ~179KB uncompressed, we don't want to wait until it is downloaded.
+// So we load it asynchronously...
+require.ensure('glsl-parser', () => {
+  // ... and replace the naive parser with the real one, when ready.
+  glslParser = require('glsl-parser');
+
+  // notify interested parties, so that they can recheck code if they wish.
+  bus.fire('glsl-parser-ready'); 
+});
 
 var vectorFieldGlobals = `
 import {
@@ -49,15 +59,6 @@ return v;
 
   return parserResult;
 }
-
-// glsl-parser is ~179KB uncompressed, we don't want to wait until it is downloaded.
-// So we load it asynchronously...
-require.ensure('glsl-parser', () => {
-  // ... and replace the naive parser with the real one, when ready.
-  glslParser = require('glsl-parser');
-  bus.fire('glsl-parser-ready');
-})
-
 
 function parserError(log) {
   let diag = log.diagnostics[0];

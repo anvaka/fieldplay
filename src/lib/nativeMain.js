@@ -2,11 +2,16 @@ import initScene from './scene';
 import bus from './bus';
 
 var canvas = document.getElementById('scene');
-
 // Canvas may not be available in test run
-if (canvas) initWebGL(canvas);
+if (canvas) initVectorFieldApp(canvas);
 
-function initWebGL(canvas) {
+// Tell webpack to split bundle, and download settings UI later.
+require.ensure('@/vueApp.js', () => {
+  // Settings UI is ready, initialize vue.js application
+  require('@/vueApp.js');
+});
+
+function initVectorFieldApp(canvas) {
   canvas.width = window.innerWidth;
   canvas.height =  window.innerHeight;
   var ctxOptions = {antialiasing: false };
@@ -24,9 +29,6 @@ function initWebGL(canvas) {
     window.webgGLEnabled = false;
   }
 }
-require.ensure('@/main.js', () => {
-  require('@/main.js');
-})
 
 var CCapture;
 var currentCapturer;
