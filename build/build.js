@@ -9,6 +9,7 @@ var chalk = require('chalk')
 var webpack = require('webpack')
 var config = require('../config')
 var webpackConfig = require('./webpack.prod.conf')
+var fs = require('fs');
 
 var spinner = ora('building for production...')
 spinner.start()
@@ -25,6 +26,15 @@ rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
       chunks: false,
       chunkModules: false
     }) + '\n\n')
+
+    fs.writeFile('stats.json', JSON.stringify(stats.toJson('verbose')), 'utf8', (err) => {
+      if (!err) {
+        console.log('Stats files is saved to stats.json');
+      } else {
+        console.log('Failed to save stats file', err);
+      }
+    });
+
 
     if (stats.hasErrors()) {
       console.log(chalk.red('  Build failed with errors.\n'))
