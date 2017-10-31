@@ -19,10 +19,8 @@ export default function wglPanZoom(canvas, updateBoundingBoxCallback) {
       var dx = newTransform.x;
       var dy = newTransform.y; 
 
-      // fix panzoom?
-      // TODO: Need to figure out how to avoid tiny motions at the end of kinetic zoom.
-      if ((lastScale - newTransform.scale) < 0.0001 && 
-          // newTransform.scale === 1 &&
+      let dScale = (lastScale - newTransform.scale);
+      if (dScale === 0 && 
           Math.abs(dx - lastDx) < transformThreshold &&
           Math.abs(dy - lastDy) < transformThreshold) {
           // Wait for larger transform
