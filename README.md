@@ -4,7 +4,7 @@ This is a placeholder for vector fields exploration. Will be available soon.
 
 ## What?
 
-Let's assign to every point on a grid a vector `(1, 0)`, which means
+Let's assign to every point on a grid a vector `(1, 0)`. This means
 we have an arrow, pointing to the right:
 
 ![Vector field V(1, 0)](https://github.com/anvaka/fieldplay/wiki/images/field_1_0.png)
@@ -70,7 +70,7 @@ mathematical formulas can be expressed in free form
 5. The vector field definition is saved in the URL with [query-state](https://github.com/anvaka/query-state) 
 library. So that you can bookmark/share your vector fields easily
 
-### GLSL code for vector field
+## GLSL code for vector field
 
 Every time when vector field code is changed I compile a new shader:
 
@@ -107,7 +107,7 @@ specific to type checking, and got validation (fingers crossed) more intuitive:
 ![glsl validation](https://github.com/anvaka/fieldplay/wiki/images/glsl_validation.gif)
 
 
-### Page load time
+## Page load time
 
 Unfortunately, GLSL parsing came at cost - the library is ~64KB of compressed javascript. Together with
 vue.js (~26KB) users would have to download almost 90KB of code, that is not immediately needed
@@ -166,5 +166,116 @@ Wi-Fi network, the first frame with vector field is rendered in less than 500ms:
 
 *Screenshot is taken with Chrome's developer tools, disabled cache. Start time is counted from the navigation start*
 
+# Float packing
 
-*to be continued*
+The core idea of WebGL based computation is quite simple.
+
+GPU can render images very fast. Each image is a collection of pixels. Each pixels is just a number,
+that represents color, usually written in 32 bits (RGBA format).
+
+But who said that these 32 bits per pixel have to represent a color? Why can't we compute some number,
+and store it into 32 bits? This number could be, for example, position of a particle that follows
+along some velocity vector...
+
+If we do so, the GPU would still treat these numbers as colors:
+
+![colorful mess](https://github.com/anvaka/fieldplay/wiki/images/number_pixels.png)
+
+Luckily, we don't have to make this seemingly random images visible to the users. WebGL allows
+to render things onto "virtual" screens, called `frame buffers`.
+
+These virtual screens are just images (textures) in the video memory. With two textures we can 
+trick GPU into solving math problems. On each frame the algorithm works like this:
+
+```
+1. Tell GPU, to read data from a "background" texture;
+2. Tell GPU, to write data to a "screen" texture using frame buffer;
+3. Swap "background" with "screen";
+```
+
+In theory this should work nice. In practice there is a problem. WebGL doesn't
+let you write floating point numbers into textures. So we need to convert a float number into
+`RGBA` format, with 8 bits per channel.
+
+In his article, Vladimir used the following encoding/decoding schema:
+
+``` glsl
+// decode particle position (x, y) from pixel RGBA color
+vec2 pos = vec2(
+    color.r / 255.0 + color.b,
+    color.g / 255.0 + color.a);
+... // move the position
+// encode the position back into RGBA
+gl_FragColor = vec4(
+    fract(pos * 255.0),
+    floor(pos * 255.0) / 255.0);
+```
+
+Here both `X` and `Y` coordinate of the particle is stored into a single 32bit number.
+I used this approach in the beginning, and it worked well on desktop and on my Android phone.
+
+However, when I opened a website on iPhone, unpleasant surprise was waiting for me. Severe
+artifacts appeared without any apparent reason.
+
+Compare. The same code runs on desktop (left) and on the iPhone (right)
+
+![regular circle](https://github.com/anvaka/fieldplay/wiki/images/no_banding_desktop_small.gif)
+![iPhone banding effect](https://github.com/anvaka/fieldplay/wiki/images/banding_iphone_small.gif)
+
+What's even worse, when field is static (velocity is 0 everywhere), the particles on iPhone were kept moving:
+
+![Desktop - no movement, fine](https://github.com/anvaka/fieldplay/wiki/images/zero_v_desktop_small.gif)
+![iPhone - moving. Why?](https://github.com/anvaka/fieldplay/wiki/images/zero_v_moving_iphone_small.gif)
+
+I checked that requested floating point resolution was set to the highest available (`highp`). Yet the artifacts
+were to obvious to let them be.
+
+### How can we fix this?
+
+I didn't want to go the easiest path of enabling floating point textures. They are 
+[not as much widely supported](https://webglstats.com/search?query=OES_texture_float) as I'd like.
+Instead, I did what years of non-GPU programming told me not to do. 
+
+I decided to solve thousands of ordinary differential equations multiple times per frame. Once per each dimension.
+
+It seemed crazy to me, as I thought this would kill performance. But even my low-end Android phone had no problems
+with this approach.
+
+So, I'd pass an attribute to the shader, telling which dimension needs to be written as an output:
+
+``` glsl
+if (u_out_coordinate == 0) gl_FragColor = encodeFloatRGBA(pos.x);
+else if (u_out_coordinate == 1) gl_FragColor = encodeFloatRGBA(pos.y);
+```
+
+The `encodeFloatRGBA()` uses all 32 bits to encode float as RGBA vector. I found [its implementation](https://github.com/anvaka/fieldplay/blob/master/src/lib/utils/floatPacking.js)
+somewhere on stackoverflow, and I'm not sure if it's the best possible way of packing
+(if you know better, please let me know).
+
+The good news is that artifacts were gone:
+
+![No artifacts](https://github.com/anvaka/fieldplay/wiki/images/no_artifacts_small.gif)
+
+# Sharing
+
+I was amazed many times how beautiful some vector fields are. I created a [very naive random vector field
+generator](https://github.com/anvaka/fieldplay/blob/master/src/lib/generate-equation.js), which sometimes
+does silly things. You can trigger it by pressing "Randomize" button.
+
+![Generator](https://github.com/anvaka/fieldplay/wiki/images/generator_small.gif)
+
+But please don't think that what it can do is all there is. It's just a tip of an iceberg, and I hope
+you play with vector field yourself.
+
+When you find something interesting - don't forget to share! Just copy the link and share it away.
+
+The link holds all necessary information to restore vector field state (this is done with help of
+[query-state](https://github.com/anvaka/query-state) library).
+
+
+# Thanks!
+I learned a lot building this project. I hope you too liked this short voyage into world of vector fields, math and WebGL.
+
+Please [let me know](https://twitter.com/anvaka) what you think.
+
+Have fun!
