@@ -217,7 +217,7 @@ gl_FragColor = vec4(
     floor(pos * 255.0) / 255.0);
 ```
 
-Here both `X` and `Y` coordinate of the particle is stored into a single 32bit number.
+Here both `X` and `Y` coordinate of the particle are stored into a single 32bit number.
 I used this approach in the beginning, and it worked well on desktop and on my Android phone.
 
 However, when I opened a website on iPhone, unpleasant surprise was waiting for me. Severe
