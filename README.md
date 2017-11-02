@@ -281,6 +281,19 @@ The link holds all necessary information to restore vector field state (this is 
 If you'd like to record a video with a vector tool, please refer to [instructions in this
 file](https://github.com/anvaka/fieldplay/blob/master/ScreenRecording.md).
 
+
+# Local development
+
+Clone this repository, then:
+
+``` bash
+# install dependencies
+npm install
+
+# serve with hot reload at http://localhost:8880
+npm run dev
+```
+
 # Thanks!
 I learned a lot building this project. I hope you too liked this short voyage into world of vector fields, math and WebGL.
 
