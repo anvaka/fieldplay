@@ -276,6 +276,11 @@ When you find something interesting - don't forget to share! Just copy the link 
 The link holds all necessary information to restore vector field state (this is done with help of
 [query-state](https://github.com/anvaka/query-state) library).
 
+## Video recording
+
+If you'd like to record a video with a vector tool, please refer to [instructions in this
+file](https://github.com/anvaka/fieldplay/blob/master/ScreenRecording.md).
+
 # Thanks!
 I learned a lot building this project. I hope you too liked this short voyage into world of vector fields, math and WebGL.
 
