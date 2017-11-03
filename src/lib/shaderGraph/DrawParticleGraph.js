@@ -129,7 +129,7 @@ ${integrate.getFunctions()}
 `;
 
     return `
-vec2 velocity = rk4(v_particle_pos);
+vec2 velocity = get_velocity(v_particle_pos);
 ${decode}
 `
   }

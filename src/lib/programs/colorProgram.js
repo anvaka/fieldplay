@@ -1,7 +1,6 @@
 import util from '../gl-utils';
 import bus from '../bus';
 import {decodeFloatRGBA} from '../utils/floatPacking';
-import config from '../config';
 import makeStatCounter from '../utils/makeStatCounter';
 
 const OUT_V_X = 6;
