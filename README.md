@@ -41,8 +41,8 @@ v.x = -2.0 * mod(floor(y), 2.0) + 1.0;
 v.y = 0.0;
 ```
 
-The reminder after integer division `y/2` can be either `1` or `0`.
-Then we transform the reminder, so that the final vector is either `(-1, 0)` or `(1, 0)`. 
+The remainder after integer division `y/2` can be either `1` or `0`.
+Then we transform the remainder, so that the final vector is either `(-1, 0)` or `(1, 0)`. 
 
 So far, we've used only one component of the velocity vector `v.x`. And particles
 moved only horizontally. Let's try to set both components and see what happens
@@ -242,17 +242,26 @@ I didn't want to go the easiest path of enabling floating point textures. They a
 [not as much widely supported](https://webglstats.com/search?query=OES_texture_float) as I'd like.
 Instead, I did what years of non-GPU programming told me not to do. 
 
-I decided to solve thousands of ordinary differential equations multiple times per frame. Once per each dimension.
-
-It seemed crazy to me, as I thought this would kill performance. But even my low-end Android phone had no problems
-with this approach.
-
-So, I'd pass an attribute to the shader, telling which dimension needs to be written as an output:
+I decided to solve thousands of ordinary differential equations not just once per frame. But one time per each dimension.
+I'd pass an attribute to the shader, telling which dimension needs to be written as an output for this "draw" call:
 
 ``` glsl
 if (u_out_coordinate == 0) gl_FragColor = encodeFloatRGBA(pos.x);
 else if (u_out_coordinate == 1) gl_FragColor = encodeFloatRGBA(pos.y);
 ```
+
+In pseudo-code it looks like this:
+
+```
+Frame 1:
+  Step 1: Hey WebGL, set u_out_coordinate to 1 and render everything into `texture_x`;
+  Step 2: Hey WebGL, set u_out_coordinate to 2 and render everything AGAIN into `texture_y`;
+```
+
+We solve the same problem and throw away everything but `x` component of the solution. Then repeat it for `y`.
+
+It seemed crazy to me, as I thought this would kill performance. But even my low-end Android phone had no problems
+with this approach.
 
 The `encodeFloatRGBA()` uses all 32 bits to encode float as RGBA vector. I found [its implementation](https://github.com/anvaka/fieldplay/blob/master/src/lib/utils/floatPacking.js)
 somewhere on stackoverflow, and I'm not sure if it's the best possible way of packing
