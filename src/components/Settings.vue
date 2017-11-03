@@ -560,6 +560,9 @@ a.help-icon {
     text-align: center;
     color: secondary-text;
   }
+  input:invalid {
+      box-shadow: none;
+  }
   .max-x {
     justify-content: flex-end;
   }
