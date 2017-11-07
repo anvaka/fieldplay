@@ -304,6 +304,10 @@ npm install
 npm run dev
 ```
 
+# License
+
+The project is released under the [MIT license](https://github.com/anvaka/fieldplay/blob/master/LICENSE).
+
 # Thanks!
 I learned a lot building this project. I hope you too liked this short voyage into world of vector fields, math and WebGL.
 
