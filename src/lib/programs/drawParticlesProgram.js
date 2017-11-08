@@ -52,7 +52,6 @@ export default function drawParticlesProgram(ctx) {
     updatePositionProgram.updateParticlesPositions();
   }
 
-
   function updateColorMode() {
     initDrawProgram();
   }
@@ -106,6 +105,8 @@ export default function drawParticlesProgram(ctx) {
     gl.uniform2f(program.u_min, bbox.minX, bbox.minY);
     gl.uniform2f(program.u_max, bbox.maxX, bbox.maxY);
   
+    var cursor = ctx.cursor;
+    gl.uniform4f(program.cursor, cursor.clickX, cursor.clickY, cursor.hoverX, cursor.hoverY);
     gl.drawArrays(gl.POINTS, 0, numParticles); 
   }
 }

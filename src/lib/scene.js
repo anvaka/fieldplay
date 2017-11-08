@@ -17,6 +17,7 @@ import getParsedVectorFieldFunction from './utils/getParsedVectorFieldFunction';
 
 import createScreenProgram from './programs/screenProgram';
 import createDrawParticlesProgram from './programs/drawParticlesProgram';
+import createCursorUpdater from './utils/cursorUpdater';
 
 /**
  * Kicks offs the app rendering. Initialized before even vue is loaded.
@@ -88,6 +89,16 @@ export default function initScene(gl) {
     // current frame number. Reset every time when new shader is compiled
     frame: 0,
 
+    // Information about mouse cursor. Could be useful to simplify 
+    // exploration
+    cursor: {
+      // Where mouse was last time clicked (or tapped)
+      clickX: 0, clickY: 0,
+      // where mouse was last time moved. If this is a touch device
+      // this is the same as clickX, clickY
+      hoverX: 0, hoverX: 0
+    },
+
     // Texture size to store particles' positions
     particleStateResolution: 0,
 
@@ -107,6 +118,7 @@ export default function initScene(gl) {
   // screen rendering;
   var screenProgram = createScreenProgram(ctx);
   var drawProgram = createDrawParticlesProgram(ctx);
+  var cursorUpdater = createCursorUpdater(ctx);
 
   // For delayed parsing result verification (e.g. when vue is loaded it
   // can request us to see if there were any errors)
@@ -359,6 +371,7 @@ export default function initScene(gl) {
       stop();
       panzoom.dispose();
       window.removeEventListener('resize', onResize, true);
+      cursorUpdater.dispose();
   }
 
   function nextFrame() {

@@ -14,6 +14,7 @@ export default class UserDefinedVelocityFunction extends BaseShaderNode {
   getDefines() {
     return `
 uniform float frame;
+uniform vec4 cursor;
 uniform sampler2D u_audio;
 
 #define PI 3.1415926535897932384626433832795

@@ -34,6 +34,7 @@ import {
   float PI;
   float snoise(vec2 v);
   float frame;
+  vec4 cursor;
   vec2 rotate(vec2 p,float a);
   float audio(float index);
 }`;
