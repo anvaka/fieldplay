@@ -30,7 +30,6 @@ require.ensure('glsl-parser', () => {
 
 var vectorFieldGlobals = `
 import {
-
   float PI;
   float snoise(vec2 v);
   float frame;

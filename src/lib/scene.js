@@ -96,7 +96,7 @@ export default function initScene(gl) {
       clickX: 0, clickY: 0,
       // where mouse was last time moved. If this is a touch device
       // this is the same as clickX, clickY
-      hoverX: 0, hoverX: 0
+      hoverX: 0, hoverY: 0
     },
 
     // Texture size to store particles' positions
