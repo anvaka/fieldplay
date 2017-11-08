@@ -127,7 +127,7 @@ export default function initScene(gl) {
   loadCodeFromAppState();
 
   // particles
-  initParticles(particleCount);
+  updateParticlesCount(particleCount);
 
   var api = {
     start: nextFrame,
@@ -273,7 +273,7 @@ export default function initScene(gl) {
     if (newParticleCount === particleCount) return;
     if (newParticleCount < 1) return;
 
-    initParticles(newParticleCount);
+    updateParticlesCount(newParticleCount);
 
     particleCount = newParticleCount;
     appState.setParticleCount(newParticleCount);
@@ -404,11 +404,10 @@ export default function initScene(gl) {
     drawProgram.updateParticlesPositions();
   }
 
-  // TODO: Rename to updateParticlesCount()
-  function initParticles(numParticles) {
+  function updateParticlesCount(numParticles) {
     // we create a square texture where each pixel will hold a particle position encoded as RGBA
     ctx.particleStateResolution = Math.ceil(Math.sqrt(numParticles));
-    drawProgram.onParticleInit();
+    drawProgram.updateParticlesCount();
   }
 
   function initPanzoom() {

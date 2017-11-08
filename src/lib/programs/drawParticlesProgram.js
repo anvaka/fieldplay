@@ -19,7 +19,7 @@ export default function drawParticlesProgram(ctx) {
   initPrograms();
 
   return {
-    onParticleInit,
+    updateParticlesCount,
     updateParticlesPositions,
     drawParticles,
     updateCode,
@@ -65,7 +65,7 @@ export default function drawParticlesProgram(ctx) {
   }
 
 
-  function onParticleInit() {
+  function updateParticlesCount() {
     if (!currentVectorField) return;
 
     particleStateResolution = ctx.particleStateResolution;
@@ -87,7 +87,7 @@ export default function drawParticlesProgram(ctx) {
     if (particleIndexBuffer) gl.deleteBuffer(particleIndexBuffer);
     particleIndexBuffer = util.createBuffer(gl, particleIndices);
 
-    updatePositionProgram.onParticleInit(particleStateX, particleStateY);
+    updatePositionProgram.updateParticlesCount(particleStateX, particleStateY);
   }
 
   function drawParticles() {

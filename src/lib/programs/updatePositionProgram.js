@@ -28,7 +28,7 @@ export default function updatePositionProgram(ctx) {
   return {
     updateCode,
     updateParticlesPositions,
-    onParticleInit,
+    updateParticlesCount,
     prepareToDraw,
   };
 
@@ -45,7 +45,7 @@ export default function updatePositionProgram(ctx) {
     if (ctx.colorMode === ColorMode.VELOCITY) readVelocity.requestSpeedUpdate();
   }
   
-  function onParticleInit(x, y) {
+  function updateParticlesCount(x, y) {
     particleStateResolution = ctx.particleStateResolution;
 
     var dimensions = [{
@@ -62,7 +62,7 @@ export default function updatePositionProgram(ctx) {
     if (writeTextures) writeTextures.dispose();
     writeTextures = textureCollection(gl, dimensions, particleStateResolution);
 
-    readVelocity.onParticleInit();
+    readVelocity.updateParticlesCount();
   }
 
   function prepareToDraw(program) {
@@ -108,7 +108,8 @@ export default function updatePositionProgram(ctx) {
       gl.drawArrays(gl.TRIANGLES, 0, 6);
     }
 
-    // TODO: I think I need to keep this time-bound
+    // TODO: I think I need to keep this time-bound, i.e. allocate X ms to
+    // process particle positions, and move on. So that the rendering thread is not paused for too long
     if (ctx.colorMode === ColorMode.VELOCITY) {
       readVelocity.updateParticlesPositions(program);
     }

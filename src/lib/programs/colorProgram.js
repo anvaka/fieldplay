@@ -26,7 +26,7 @@ export default function colorProgram(ctx) {
   return {
     updateCode,
     updateParticlesPositions,
-    onParticleInit,
+    updateParticlesCount,
     setColorMinMax,
     requestSpeedUpdate,
     dispose
@@ -60,8 +60,9 @@ export default function colorProgram(ctx) {
     gl.uniform2f(program.u_velocity_range, velocityCounter.getMin(), velocityCounter.getMax());
   }
 
-  function onParticleInit() {
+  function updateParticlesCount() {
     disposeTextures();
+
     particleStateResolution = ctx.particleStateResolution;
     numParticles = particleStateResolution * particleStateResolution;
 
