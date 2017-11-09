@@ -2,12 +2,18 @@ import queryState from 'query-state';
 import bus from './bus';
 import ColorModes from './programs/colorModes';
 
-var qs = queryState();
+var qs = queryState({}, {
+  useSearch: true,
+  // Older version of the app used hash to store application arguments.
+  // Turns out hash is not good for websites like reddit. They can block
+  // url, saying "url was already submitted" if the only part that is different
+  // is hash. So, we switch to search string, and maintain backward compatibility
+  // for fields created before.
+  rewriteHashToSearch: true
+});
+
 var currentState = qs.get();
 
-// var defaultVectorField = `v.x = -p.y;
-// v.y = p.x;
-// `;
 var defaultVectorField = `v.x = 0.1 * p.y;
 v.y = -0.2 * p.y;`
 
