@@ -189,8 +189,6 @@ export default {
   },
   watch: {
     vectorField(newValue, oldValue) {
-      console.log(newValue, oldValue);
-      // TODO: this seem to be causing double initialization
       if (this.pendingSetCode) {
         clearTimeout(this.pendingSetCode);
       }
