@@ -21,8 +21,11 @@
         <li>
           <a href='https://github.com/anvaka/fieldplay' class='highlighted'>Learn more </a> about this project on GitHub
         </li><li>
-        Stay tuned for updates on <a href='https://twitter.com/anvaka' class='highlighted'>Twitter.</a>
+        Stay tuned for updates on <a href='https://twitter.com/anvaka' class='highlighted'>Twitter</a>
+        </li><li>
+        <a href='https://www.reddit.com/r/fieldplay/' class='highlighted'>/r/fieldplay</a> - join our small subreddit
         </li>
+
       </ul>
       <p>With passion,<br/> Anvaka</p>
       <a href='#' @click.prevent='close' class='large-close bold'>
