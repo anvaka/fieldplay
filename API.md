@@ -7,4 +7,4 @@ list of variables can be used in velocity shader:
 * `float frame` - Current frame number. Increases over time. Resets to 0 if you change shader's code
 * `vec4 cursor` - Defines position of a cursor in bounding box coordinates. `cursor.xy` - position 
 where mouse was clicked (or tapped) last time. `cursor.zw` - current mouse hover position. On mobile
-phones, where mouse is not available, `zw` component will be the same as `xy`
+phones, where mouse is not available, `zw` component will be the `xy` of [`touchmove`](https://developer.mozilla.org/en-US/docs/Web/Events/touchmove) event.

@@ -13,6 +13,7 @@ export default function createCursorUpdater(ctx) {
   window.addEventListener('mousemove', onMouseMove, true);
   window.addEventListener('mousedown', onMouseClick, true);
   window.addEventListener('touchstart', onTouchStart, true);
+  window.addEventListener('touchmove', onTouchMove, true);
 
   return {
     dispose
@@ -22,14 +23,20 @@ export default function createCursorUpdater(ctx) {
     window.removeEventListener('mousemove', onMouseMove, true);
     window.removeEventListener('mousedown', onMouseClick, true);
     window.removeEventListener('touchstart', onTouchStart, true);
+    window.removeEventListener('touchmove', onTouchMove, true);
   }
 
   function onTouchStart(e) {
     var firstTouch = e.touches[0];
     if (!firstTouch) return;
 
-    setHover(firstTouch.clientX, firstTouch.clientY);
     setClick(firstTouch.clientX, firstTouch.clientY);
+  }
+
+  function onTouchMove(e) {
+    var firstTouch = e.touches[0];
+    if (!firstTouch) return;
+    setHover(firstTouch.clientX, firstTouch.clientY);
   }
 
   function onMouseMove(e) { setHover(e.clientX, e.clientY); }
