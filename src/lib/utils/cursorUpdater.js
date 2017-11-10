@@ -31,6 +31,7 @@ export default function createCursorUpdater(ctx) {
     if (!firstTouch) return;
 
     setClick(firstTouch.clientX, firstTouch.clientY);
+    setHover(firstTouch.clientX, firstTouch.clientY);
   }
 
   function onTouchMove(e) {
