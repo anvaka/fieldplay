@@ -62,7 +62,7 @@ return v;
 
 function parserError(log) {
   let diag = log.diagnostics[0];
-  // TODO probably need to check kind (errors ar 0, warnings are 1)
+  // TODO probably need to check kind (errors are 0, warnings are 1)
   let firstError = diag.range;
   let lineColumn = firstError.lineColumn();
   let source = firstError.source;

@@ -56,8 +56,6 @@ export default function initScene(gl) {
   gl.disable(gl.DEPTH_TEST);
   gl.disable(gl.STENCIL_TEST); 
 
-  // TODO: Remove local variables in favour of context.
-
   // Context variable is a way to share rendering state between multiple programs. It has a lot of stuff on it.
   // I found that it's the easiest way to work in state-full world of WebGL.
   // Until I discover a better way to write WebGL code.
