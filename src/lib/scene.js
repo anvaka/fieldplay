@@ -309,7 +309,15 @@ export default function initScene(gl) {
   }
 
   function updateVectorField(vectorFieldCode) {
-    if (vectorFieldCode === currentVectorFieldCode) return getLastParserResult();
+    if (vectorFieldCode === currentVectorFieldCode) {
+      // If field hasn't changed, let's make sure that there was no previous
+      // error
+      if (parserResult && parserResult.error) {
+        // And if there was error, let's revalidate code:
+        validateCode();
+      }
+      return getLastParserResult();
+    } 
 
     let result = trySetNewCode(vectorFieldCode);
     if (result && result.error) return result;
