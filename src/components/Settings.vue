@@ -3,14 +3,11 @@
     <div class='block vector-field'>
       <div class='title'>Vector field <a class='reset-all' :class='{"syntax-visible": syntaxHelpVisible}' href='#' @click.prevent='syntaxHelpVisible = !syntaxHelpVisible'>syntax help</a></div>
       <syntax v-if='syntaxHelpVisible' @close='syntaxHelpVisible = false'></syntax>
-      <pre>
-<span class='comment'>// p.x and p.y are current coordinates
-// v.x and v.y is a velocity at point p</span>
-function velocity(<span class='type' >vec2</span> p) {
-  <span class='type'>vec2</span> v = <span class='type'>vec2</span>(0., 0.);</pre>
-      <textarea ref='codeInput' v-model='vectorField' type='text' rows='3' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
-<pre>  return v;
-}</pre>
+<codemirror v-model='vectorField' :options="{
+  viewportMargin: Infinity,
+  theme: 'cobalt',
+  mode: 'glsl',
+}"></codemirror>
       <div class='error=container'>
         <pre v-if='error' class='error hl'>{{error}}</pre>
         <pre v-if='errorDetail' class='error detail'>{{errorDetail}}<span v-if='isFloatError'>
@@ -19,7 +16,7 @@ Did you forget to add a dot symbol? E.g. <span class='hl'>10</span> should be <s
       </div>
     </div>
     <form class='block' @submit.prevent='onSubmit'>
-      <div class='title'>Settings<a class='reset-all' href='#' @click='reset'>reset all</a> </div>
+      <div class='title'>Settings<a class='reset-all' href='?'>reset all</a> </div>
       <div class='row'>
         <div class='col'>Particle color</div>
         <div class='col full'> 
@@ -128,13 +125,18 @@ Did you forget to add a dot symbol? E.g. <span class='hl'>10</span> should be <s
 <script>
 import bus from '../lib/bus';
 import appState from '../lib/appState';
-import autosize from 'autosize';
 import generateFunction from '../lib/generate-equation';
+import wrapVectorField from '../lib/wrapVectorField';
 import SoundLoader from '../lib/sound/soundLoader';
 import SoundCloudAudioSource from '../lib/sound/audioSource';
 import config from '../lib/config';
 import Syntax from './help/Syntax';
 import HelpIcon from './help/Icon';
+
+import { codemirror } from 'vue-codemirror-lite';
+require('codemirror/theme/cobalt.css')
+var CodeMirror = require('codemirror/lib/codemirror.js')
+require('./glslmode')(CodeMirror);
 
 // Temporary disable this until API is finished.
 const soundAvailable = config.isAudioEnabled;
@@ -144,15 +146,16 @@ export default {
   props: ['scene'],
   components: {
     Syntax,
-    HelpIcon
+    HelpIcon,
+    codemirror
   },
   mounted() {
     bus.on('scene-ready', this.onSceneReady, this);
     bus.on('generate-field', this.generateNewFunction, this);
     bus.on('bbox-change', this.updateBBox, this);
     bus.on('glsl-parser-result-changed', this.updateParserResults, this);
-    autosize(this.$refs.codeInput);
 
+    this.$on('editor-update', this.refreshCode);
     if (soundAvailable) this.soundLoader = new SoundLoader(this.$refs.player);
   },
   beforeDestroy() {
@@ -160,7 +163,6 @@ export default {
     bus.off('generate-field', this.generateNewFunction, this);
     bus.off('bbox-change', this.updateBBox, this);
     bus.off('glsl-parser-result-changed', this.updateParserResults, this);
-    autosize.destroy(this.$refs.codeInput);
   },
   data() {
     return {
@@ -196,8 +198,6 @@ export default {
       this.pendingSetCode = setTimeout(() => {
         this.sendVectorField();
         this.pendingSetCode = 0;
-
-        autosize.update(this.$refs.codeInput);
       }, 300);
     },
     particlesCount(newValue, oldValue) {
@@ -243,6 +243,9 @@ export default {
     }
   },
   methods: {
+    refreshCode(newCode) {
+      this.vectorField = newCode;
+    },
     moveBoundingBox(key, value) {
       if (this.ignoreBbox) {
         return;
@@ -260,11 +263,7 @@ export default {
       // TODO: Error handling
     },
     generateNewFunction() {
-      this.vectorField = generateFunction();
-    },
-    reset() {
-      // we reset the scene bounding box, and let the a.href = # do the rest.
-      this.scene.resetBoundingBox();
+      this.vectorField = wrapVectorField(generateFunction());
     },
     goToOrigin() {
       this.scene.resetBoundingBox();
@@ -444,15 +443,6 @@ form.block {
 
 }
 .vector-field {
-  pre {
-    margin: 0;
-    color: #6789ab;
-    .comment {
-      color: #435970;
-      font-style: italic;
-    }
-  }
-
   pre.error {
     color: rgba(250, 232, 55, 1);
     overflow-y: auto;
@@ -468,7 +458,6 @@ form.block {
   }
 
   textarea {
-    max-height: 180px;
     background: transparent;
     color: white;
     font-family: monospace;
@@ -476,7 +465,7 @@ form.block {
     padding: 0;
     padding-left: 14px;
     width: settings-width - 14px;
-    font-size: 18px;
+    font-size: 14px;
     border: 1px solid transparent;
     &:focus {
       outline: none;
@@ -566,6 +555,26 @@ a.help-icon {
   }
 }
 
+.CodeMirror.cm-s-cobalt {
+  z-index: 0;
+  max-height: 190px;
+  font-size: 14px;
+  background: window-background;
+
+  border: 1px solid transparent;
+
+  span.cm-comment {
+      color: #56728f;
+      font-style: italic;
+  }
+}
+.cm-s-cobalt span.cm-keyword { color: #FF9D00; }
+.cm-s-cobalt span.cm-builtin, .cm-s-cobalt span.cm-special { color: #FF628C; }
+.CodeMirror.cm-s-cobalt.CodeMirror-focused {
+  border: 1px dashed;
+  background: #13294f;
+}
+
 @media (max-width: small-screen) {
   .settings {
     width: 100%;
@@ -573,13 +582,6 @@ a.help-icon {
     .title {
       font-size: 14px;
       text-align: left;
-    }
-  }
-  .vector-field {
-    textarea {
-      margin-top: 0;
-      font-size: 16px;
-      width: 100%;
     }
   }
 }

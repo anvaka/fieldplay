@@ -46,13 +46,7 @@ import {
  */
 export default function getParsedVectorFieldFunction(vectorFieldCode) {
   // TODO: what if we want to support 3d?
-  var vectorFieldParsedCode = `
-vec2 velocity(vec2 p) {
-vec2 v = vec2(0., 0.);
-${vectorFieldCode}
-return v;
-}`
-  var parserResult = glslParser.check(vectorFieldParsedCode, { globals: vectorFieldGlobals });
+  var parserResult = glslParser.check(vectorFieldCode, { globals: vectorFieldGlobals });
   parserResult.code = vectorFieldCode;
 
   if (parserResult.log.errorCount) parserResult.error = parserError(parserResult.log);

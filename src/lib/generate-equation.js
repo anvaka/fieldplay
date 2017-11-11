@@ -147,6 +147,5 @@ export default function generate() {
   var vX = generateArguments();
   var vY = generateArguments();
   return `v.x = ${vX};
-v.y = ${vY};
-  `;
+  v.y = ${vY};`;
 }

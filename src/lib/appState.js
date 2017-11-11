@@ -1,6 +1,7 @@
 import queryState from 'query-state';
 import bus from './bus';
 import ColorModes from './programs/colorModes';
+import wrapVectorField from './wrapVectorField';
 
 var qs = queryState({}, {
   useSearch: true,
@@ -14,8 +15,8 @@ var qs = queryState({}, {
 
 var currentState = qs.get();
 
-var defaultVectorField = `v.x = 0.1 * p.y;
-v.y = -0.2 * p.y;`
+var defaultVectorField = wrapVectorField(`v.x = 0.1 * p.y;
+  v.y = -0.2 * p.y;`);
 
 var pendingSave;
 var defaults = {
@@ -165,7 +166,22 @@ function saveReally(bbox) {
 }
 
 function getCode() {
-  return qs.get('code') || defaultVectorField;
+  var vfCode = qs.get('vf');
+  if (vfCode) return vfCode;
+  
+  // If we didn't get code yet, let's try read to read it from previous version
+  // of the API.
+  // TODO: Need to figure out how to develop this in backward/future compatible way.
+  var oldCode = qs.get('code');
+  if (oldCode) {
+    vfCode = wrapVectorField(oldCode);
+    // side effect - let's clean the old URL
+    delete(currentState.code);
+    qs.set('vf', vfCode);
+    return vfCode;
+  }
+
+  return defaultVectorField;
 }
 
 function getDefaultCode() {
@@ -174,7 +190,7 @@ function getDefaultCode() {
 
 function saveCode(code) {
   qs.set({
-    code: code
+    vf: code
   });
   currentState.code = code;
 }
