@@ -46,12 +46,14 @@ import {
  */
 export default function getParsedVectorFieldFunction(vectorFieldCode) {
   // TODO: what if we want to support 3d?
-  var parserResult = glslParser.check(vectorFieldCode, { globals: vectorFieldGlobals });
-  parserResult.code = vectorFieldCode;
+  return new Promise((resolve) => {
+    var parserResult = glslParser.check(vectorFieldCode, { globals: vectorFieldGlobals });
+    parserResult.code = vectorFieldCode;
 
-  if (parserResult.log.errorCount) parserResult.error = parserError(parserResult.log);
+    if (parserResult.log.errorCount) parserResult.error = parserError(parserResult.log);
 
-  return parserResult;
+    resolve(parserResult);
+  });
 }
 
 function parserError(log) {

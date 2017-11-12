@@ -311,8 +311,8 @@ export default {
     },
 
     sendVectorField() {
-      let parserResult = this.scene.updateVectorField(this.vectorField);
-      this.updateParserResults(parserResult);
+      // it's asynchronous. Results will eventually come.
+      this.scene.updateVectorField(this.vectorField);
     },
 
     updateParserResults(parserResult) {

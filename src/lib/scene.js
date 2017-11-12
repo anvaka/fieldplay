@@ -36,7 +36,7 @@ export default function initScene(gl) {
   // This will trigger frame-by-frame recording (it is slow). To stop it, call window.stopRecord();
   bus.on('start-record', startRecord);
   bus.on('stop-record', stopRecord);
-  bus.on('glsl-parser-ready', validateCode);
+  bus.on('glsl-parser-ready', parseCode);
   var currentCapturer = null;
 
   // TODO: It feels like bounding box management needs to be moved out from here.
@@ -121,6 +121,8 @@ export default function initScene(gl) {
   // For delayed parsing result verification (e.g. when vue is loaded it
   // can request us to see if there were any errors)
   var parserResult;
+
+  var previousUpdateVectorFieldRequest;
 
   loadCodeFromAppState();
 
@@ -299,13 +301,16 @@ export default function initScene(gl) {
   function loadCodeFromAppState() {
     let persistedCode = appState.getCode();
     if (persistedCode) {
-      let result = trySetNewCode(persistedCode);
-      if (!result) return; // This means we set correctly;
-      // If we get here - something went wrong. see the console
-      console.error('Failed to restore previous vector field: ', result.error);
+      return trySetNewCode(persistedCode).then(result => {
+        if (!result.error) return; // This means we set correctly;
+        // If we get here - something went wrong. see the console
+        console.error('Failed to restore previous vector field: ', result.error);
+        // Let's use default vector field
+        return trySetNewCode(appState.getDefaultCode());
+      });
     }
-    // we either failed or we want a default vector field
-    trySetNewCode(appState.getDefaultCode());
+    // we want a default vector field
+    return trySetNewCode(appState.getDefaultCode());
   }
 
   function updateVectorField(vectorFieldCode) {
@@ -314,39 +319,53 @@ export default function initScene(gl) {
       // error
       if (parserResult && parserResult.error) {
         // And if there was error, let's revalidate code:
-        validateCode();
+        parseCode();
       }
       return getLastParserResult();
     } 
+    if (previousUpdateVectorFieldRequest) {
+      previousUpdateVectorFieldRequest.cancel();
+    }
+    previousUpdateVectorFieldRequest = trySetNewCode(vectorFieldCode).then((result) => {
+      previousUpdateVectorFieldRequest = null;
+      if (result && result.error) {
+        bus.fire('glsl-parser-result-changed', result.error);
+        return result;
+      }
 
-    let result = trySetNewCode(vectorFieldCode);
-    if (result && result.error) return result;
-
-    currentVectorFieldCode = vectorFieldCode;
-    appState.saveCode(vectorFieldCode);
+      currentVectorFieldCode = vectorFieldCode;
+      appState.saveCode(vectorFieldCode);
+    })
   }
 
-  function validateCode() {
-    parserResult = getParsedVectorFieldFunction(currentVectorFieldCode);
-    bus.fire('glsl-parser-result-changed', parserResult.error);
+  function parseCode(customCode) {
+    return getParsedVectorFieldFunction(customCode || currentVectorFieldCode)
+      .then(currentResult => {
+        parserResult = currentResult
+        // TODO: I probably don't need to fire this twice.
+        bus.fire('glsl-parser-result-changed', parserResult.error);
+        return parserResult;
+      });
   }
 
   function trySetNewCode(vectorFieldCode) {
     // step 1 - run through parser
-    parserResult = getParsedVectorFieldFunction(vectorFieldCode);
-
-    if (parserResult.error) {
-      return parserResult.error;
-    }
-
-    // step 2 - run through real webgl
-    try {
-      drawProgram.updateCode(parserResult.code);
-    } catch (e) {
-      return {
-        error: e.message
-      };
-    }
+    return parseCode(vectorFieldCode).then(parserResult => {
+      if (parserResult.error) {
+        return parserResult;
+      }
+      // step 2 - run through real webgl
+      try {
+        drawProgram.updateCode(parserResult.code);
+        return parserResult;
+      } catch (e) {
+        return {
+          error: {
+            error: e.message
+          }
+        }
+      }
+    });
   }
 
   function onResize() {

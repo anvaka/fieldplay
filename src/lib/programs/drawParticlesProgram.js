@@ -44,6 +44,8 @@ export default function drawParticlesProgram(ctx) {
   }
 
   function updateParticlesPositions() {
+    if (!currentVectorField) return;
+
     ctx.frame += 1
     ctx.frameSeed = Math.random();
 
@@ -64,10 +66,7 @@ export default function drawParticlesProgram(ctx) {
     initDrawProgram();
   }
 
-
   function updateParticlesCount() {
-    if (!currentVectorField) return;
-
     particleStateResolution = ctx.particleStateResolution;
     numParticles = particleStateResolution * particleStateResolution;
     var particleIndices = new Float32Array(numParticles);
@@ -91,6 +90,8 @@ export default function drawParticlesProgram(ctx) {
   }
 
   function drawParticles() {
+    if (!currentVectorField) return;
+
     var program = drawProgram;
     gl.useProgram(program.program);
   
