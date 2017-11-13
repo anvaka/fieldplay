@@ -49,7 +49,7 @@ module.exports = function(CodeMirror) {
         stream.eatWhile(/[\s]+/);
         stream.eatWhile(/[\S]+/);
         stream.eatWhile(/[\s]+/);
-        return "comment";
+        return "pragma";
       }
       if (isOperatorChar.test(ch)) {
         stream.eatWhile(isOperatorChar);

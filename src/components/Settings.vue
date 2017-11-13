@@ -5,7 +5,7 @@
       <syntax v-if='syntaxHelpVisible' @close='syntaxHelpVisible = false'></syntax>
 <codemirror v-model='vectorField' :options="{
   viewportMargin: Infinity,
-  theme: 'cobalt',
+  theme: 'glsl',
   mode: 'glsl',
 }"></codemirror>
       <div class='error=container'>
@@ -354,6 +354,7 @@ function hex(x) {
 
 <style lang='stylus'>
 @import "./shared.styl";
+@import "./glsl-theme.styl";
 
 help-background = rgb(7, 12, 23);
 
@@ -553,29 +554,6 @@ a.help-icon {
   .max-x {
     justify-content: flex-end;
   }
-}
-
-.CodeMirror.cm-s-cobalt {
-  z-index: 0;
-  max-height: 190px;
-  font-size: 14px;
-  background: window-background;
-
-  border: 1px solid transparent;
-
-  span.cm-comment {
-      color: #56728f;
-      font-style: italic;
-  }
-}
-.cm-s-cobalt span.cm-keyword { color: #FF9D00; }
-.cm-s-cobalt span.cm-builtin, .cm-s-cobalt span.cm-special { color: #FF628C; }
-.CodeMirror.cm-s-cobalt.CodeMirror-focused {
-  border: 1px dashed;
-  background: #13294f;
-}
-.cm-s-cobalt div.CodeMirror-selected {
-  background: rgb(31, 57, 114);
 }
 
 @media (max-width: small-screen) {

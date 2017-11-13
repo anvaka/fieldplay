@@ -1,0 +1,143 @@
+// (C) Copyright (c) 2014 fergaldoyle 
+// https://github.com/fergaldoyle/brackets-visual-studio-dark/blob/master/LICENSE
+// 
+// Adjusted to vector fields need by https://github.com/anvaka
+
+@import "./shared.styl";
+
+standardText = #DDD;
+
+.CodeMirror {
+	height: auto;
+  max-height: 190px;
+	font-size: 14px;
+  z-index: 0;
+	background-color: window-background;
+  border: 1px solid window-background;
+
+	.CodeMirror-gutter-elt{
+			background: transparent;
+	}
+
+	.CodeMirror-linenumber,
+	.CodeMirror-scroll,
+	.CodeMirror-gutters {
+		color: standardText;
+		font-family: Consolas,'SourceCodePro-Medium',monaco,monospace;
+	}
+
+	.CodeMirror-linenumber {
+		color: #2B91AF;
+	}
+
+	.CodeMirror-selected {
+		background-color: #264F78;
+	}
+
+	.cm-matchhighlight {
+		//background-color: #123E70;
+	}
+
+	.cm-matchingtag,
+	.CodeMirror-matchingtag {
+		background-color: #113D6F;
+		//box-shadow: 0px 0px 2px #ADC0D3;
+	}
+
+	.cm-matchingbracket,
+	.CodeMirror-matchingbracket {
+		background-color: #113D6F;
+		box-shadow: 0px 0px 3px #99B0C7;
+		color: standardText !important;
+	}
+
+
+	.CodeMirror-cursor {
+		border-left: 1px solid standardText;
+		z-index: 3;
+	}
+
+	.CodeMirror-activeline-background {
+		outline: 2px solid #dddddd;
+	}
+	// Languages
+	// common
+	.cm-m-glsl,
+	.cm-variable,
+	.cm-variable-2,
+	.cm-variable-3 {
+		color: standardText;
+	}
+
+  .cm-pragma { 
+	font-weight: bold;
+	color: #0afff8;
+	}
+
+	.cm-operator {
+		color: #B4B4B4;
+	}
+
+	.cm-comment {
+		color: #57A64A;
+		font-style: italic;
+	}
+
+	.cm-string {
+		color: #D69D85;
+	}
+
+	.cm-attribute {
+		color: #9CDCFE;
+	}
+
+	.cm-number {
+		color: #B5CEA8;
+	}
+
+	.cm-def {
+		color: #4EC9B0;
+	}
+
+	.cm-meta {
+		color: #9B9B9B;
+	}
+
+	.cm-keyword,
+	.cm-tag, .cm-atom {
+		color: #569CD6;
+	}
+
+	.cm-bracket {
+		color: #808080;
+	}
+
+	.cm-m-clike.cm-builtin {
+		color: #569CD6;
+	}
+
+	.cm-m-clike.cm-variable-2 {
+		//color: #d26bca;
+	}
+	// search highlight
+	.CodeMirror-searching {
+		color: #ddd !important;
+	}
+
+	.CodeMirror-searching.searching-last,
+	.CodeMirror-searching.searching-first {
+		border-radius: 1px;
+		background-color: #653306;
+		box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.8);
+		padding: 1px 0;
+	}
+
+	.CodeMirror-searching.searching-current-match {
+		background-color: #515C6A;
+	}
+}
+
+.CodeMirror-focused {
+	border: 1px dashed white;
+	background: #13294f;
+}
