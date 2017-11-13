@@ -6,9 +6,11 @@
 @import "./shared.styl";
 
 standardText = #DDD;
+maxHeight = 320px;
 
 .CodeMirror {
 	height: auto;
+  max-height: maxHeight;
 	font-size: 14px;
   z-index: 0;
 	background-color: window-background;
@@ -18,6 +20,10 @@ standardText = #DDD;
 			background: transparent;
 	}
 
+	.CodeMirror-scroll {
+    height: auto;
+		max-height: maxHeight;
+	}
 	.CodeMirror-linenumber,
 	.CodeMirror-scroll,
 	.CodeMirror-gutters {
