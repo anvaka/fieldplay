@@ -69,6 +69,7 @@ export default {
   display: flex;
   justify-content: center;
   background: rgba(0, 0, 0, 0.7);
+  align-items: flex-start;
 
   .close {
     position: absolute;
@@ -83,7 +84,7 @@ export default {
   }
   .content {
     color: secondary-text;
-    position: absolute;
+    position: relative;
     background: window-background;
     width: 400px;
     padding: 14px;
