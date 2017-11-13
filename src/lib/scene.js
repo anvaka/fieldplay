@@ -121,8 +121,7 @@ export default function initScene(gl) {
   // For delayed parsing result verification (e.g. when vue is loaded it
   // can request us to see if there were any errors)
   var parserResult;
-
-  var previousUpdateVectorFieldRequest;
+  var currentVectorFieldVersion = 0;
 
   loadCodeFromAppState();
 
@@ -301,16 +300,17 @@ export default function initScene(gl) {
   function loadCodeFromAppState() {
     let persistedCode = appState.getCode();
     if (persistedCode) {
-      return trySetNewCode(persistedCode).then(result => {
+      trySetNewCode(persistedCode).then(result => {
         if (!result.error) return; // This means we set correctly;
         // If we get here - something went wrong. see the console
         console.error('Failed to restore previous vector field: ', result.error);
         // Let's use default vector field
-        return trySetNewCode(appState.getDefaultCode());
+        trySetNewCode(appState.getDefaultCode());
       });
+    } else {
+      // we want a default vector field
+      trySetNewCode(appState.getDefaultCode());
     }
-    // we want a default vector field
-    return trySetNewCode(appState.getDefaultCode());
   }
 
   function updateVectorField(vectorFieldCode) {
@@ -323,11 +323,10 @@ export default function initScene(gl) {
       }
       return getLastParserResult();
     } 
-    if (previousUpdateVectorFieldRequest) {
-      previousUpdateVectorFieldRequest.cancel();
-    }
-    previousUpdateVectorFieldRequest = trySetNewCode(vectorFieldCode).then((result) => {
-      previousUpdateVectorFieldRequest = null;
+
+    trySetNewCode(vectorFieldCode).then((result) => {
+      if (result.cancelled) return;
+
       if (result && result.error) {
         bus.fire('glsl-parser-result-changed', result.error);
         return result;
@@ -335,7 +334,7 @@ export default function initScene(gl) {
 
       currentVectorFieldCode = vectorFieldCode;
       appState.saveCode(vectorFieldCode);
-    })
+    });
   }
 
   function parseCode(customCode) {
@@ -349,8 +348,16 @@ export default function initScene(gl) {
   }
 
   function trySetNewCode(vectorFieldCode) {
+    currentVectorFieldVersion += 1;
+    var capturedVersion = currentVectorFieldVersion;
     // step 1 - run through parser
     return parseCode(vectorFieldCode).then(parserResult => {
+      if (capturedVersion !== currentVectorFieldVersion) {
+        parserResult.cancelled = true;
+        // a newer request was issued. Ignore these results.
+        return parserResult;
+      }
+
       if (parserResult.error) {
         return parserResult;
       }

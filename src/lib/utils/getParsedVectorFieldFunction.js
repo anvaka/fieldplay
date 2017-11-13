@@ -3,6 +3,7 @@
  */
 
 import bus from '../bus';
+import pragmaParse from './pragmaParser';
 
 // This is naive parser that is being used until the real `glsl-parser`
 // is loaded asynchronously. This parser assumes there are no errors
@@ -46,13 +47,19 @@ import {
  */
 export default function getParsedVectorFieldFunction(vectorFieldCode) {
   // TODO: what if we want to support 3d?
-  return new Promise((resolve) => {
+  return pragmaParse(vectorFieldCode).then(pragmaParseResult => {
+    if (pragmaParseResult.error) {
+      return pragmaParseResult;
+    }
+
+    vectorFieldCode = pragmaParseResult.getCode();
+
     var parserResult = glslParser.check(vectorFieldCode, { globals: vectorFieldGlobals });
     parserResult.code = vectorFieldCode;
 
     if (parserResult.log.errorCount) parserResult.error = parserError(parserResult.log);
 
-    resolve(parserResult);
+    return parserResult;
   });
 }
 

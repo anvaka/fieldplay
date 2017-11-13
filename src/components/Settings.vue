@@ -574,6 +574,9 @@ a.help-icon {
   border: 1px dashed;
   background: #13294f;
 }
+.cm-s-cobalt div.CodeMirror-selected {
+  background: rgb(31, 57, 114);
+}
 
 @media (max-width: small-screen) {
   .settings {
