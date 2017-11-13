@@ -13,8 +13,11 @@
       <vector-view v-if='vectorLinesEnabled'></vector-view>
       <ruler></ruler>
       <a href='#' @click.prevent='aboutVisible = !aboutVisible' class='about-link'>about...</a>
-      <settings :scene='scene'></settings>
-      <controls></controls>
+      <div class='controls-container' :style='getControlsContainerStyle()' ref='controls'>
+        <controls></controls>
+        <settings :scene='scene'></settings>
+        <div ref='left' class='left resize'></div>
+      </div>
       <share></share>
       <about @close='aboutVisible = false' v-if='aboutVisible'></about>
     </div>
@@ -22,45 +25,67 @@
 </template>
 
 <script>
+import Controls from './components/Controls';
 import Ruler from './components/Ruler';
 import Settings from './components/Settings';
-import Controls from './components/Controls';
 import Share from './components/Share';
 import About from './components/About';
 import bus from './lib/bus';
+import isSmallScreen from './lib/isSmallScreen';
 import VectorView from './components/VectorView';
 import config from './lib/config';
+import createDrag from './lib/drag.js';
+
+const MIN_SETTINGS_WIDTH = 395;
 
 export default {
   name: 'app',
   mounted() {
     this.scene = window.scene;
     bus.fire('scene-ready', window.scene);
+    this.updateControlsStyle = this.updateControlsStyle.bind(this);
+    window.addEventListener('resize', this.updateControlsStyle, true);
+
+    this.resizer = createDrag(this.$refs.left, dx => {
+      this.width += dx;
+      if (this.width < MIN_SETTINGS_WIDTH) this.width = MIN_SETTINGS_WIDTH;
+    });
+  },
+  beforeDestroy() {
+    this.resizer.dispose();
+    window.removeEventListener('resize', this.updateControlsStyle, true);
+    if (this.scene) {
+      this.scene.dispose();
+      this.scene = null;
+    }
   },
   data() {
-
     return {
       scene: null,
+      width: MIN_SETTINGS_WIDTH,
       webGLEnabled: window.webgGLEnabled,
       aboutVisible: false,
       vectorLinesEnabled: config.vectorLinesEnabled
     };
   },
   components: {
+    Controls,
     Ruler,
     Settings,
-    Controls,
     Share,
     About,
     VectorView
   },
+  methods: {
+    getControlsContainerStyle() {
+      if (isSmallScreen()) return { width: '100%' };
 
-  beforeDestroy() {
-    if (this.scene) {
-      this.scene.dispose();
-      this.scene = null;
+      return {width: this.width + 'px'};
+    },
+    updateControlsStyle() {
+      this.$refs.controls.style.width = this.getControlsContainerStyle().width;
     }
-  },
+  }
 }
 </script>
 
@@ -71,6 +96,34 @@ export default {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.controls-container {
+  position: absolute;
+  max-height: 100%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+
+  border: 1px solid primary-border;
+  border-left: none;
+  border-top: none;
+  overflow: hidden;
+  flex-direction: column;
+  display: flex;
+
+  .settings {
+    flex: 1;
+  }
+}
+.resize {
+  position: absolute;
+}
+.resize.left {
+  right: -2px;
+  height: 100%;
+  width: 4px;
+  cursor: ew-resize;
+  background: transparent;
+  top: 0;
 }
 
 .no-webgl {
@@ -102,6 +155,10 @@ a.about-link {
 @media (max-width: small-screen) {
   a.about-link {
     bottom: 14px;
+  }
+
+  .controls-container {
+    width: 100%;
   }
 }
 </style>

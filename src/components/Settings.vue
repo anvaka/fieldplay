@@ -123,7 +123,9 @@ Did you forget to add a dot symbol? E.g. <span class='hl'>10</span> should be <s
   </div>
 </template>
 <script>
+// TODO: This file becomes too big. Need to split.
 import bus from '../lib/bus';
+import isSmallScreen from '../lib/isSmallScreen';
 import appState from '../lib/appState';
 import generateFunction from '../lib/generate-equation';
 import wrapVectorField from '../lib/wrapVectorField';
@@ -269,7 +271,7 @@ export default {
       this.scene.resetBoundingBox();
     },  
     onSubmit() {
-      if (window.innerWidth < 600) {
+      if (isSmallScreen()) {
         appState.settingsPanel.collapsed = true;
       }
     },
@@ -360,17 +362,12 @@ help-background = rgb(7, 12, 23);
 
 .settings {
   color: secondary-text;
-  position: absolute;
-  overflow-y: auto;
   left: 0;
+  overflow-y: auto;
+  border-top: 1px solid secondary-text;
   background: window-background;
-  width: settings-width;
-  border: 1px solid primary-border;
-  border-left: none;
-  border-top: none;
-  padding: (7px + control-bar-height) 7px 7px 7px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  max-height: 100%;
+  width: 100%;
+  padding: 7px 7px 7px 7px;
 }
 .settings.collapsed {
   display: none;
@@ -558,8 +555,6 @@ a.help-icon {
 
 @media (max-width: small-screen) {
   .settings {
-    width: 100%;
-    left: 0;
     .title {
       font-size: 14px;
       text-align: left;

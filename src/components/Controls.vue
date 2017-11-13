@@ -67,21 +67,21 @@ a svg {
 }
 .controls {
   display: flex;
-  position: absolute;
-  top: 0px;
   height: control-bar-height;
-  width: settings-width;
-  left: 0;
+  width: 100%;
   background-color: window-background;
-  border-bottom: 1px solid secondary-text;
 
   a {
     padding: 8px;
     display: flex;
     flex: 1;
-    border-right: 1px solid secondary-text;
+    border-left: 1px solid secondary-text;
     justify-content: center;
     align-items: center;
+  }
+
+  a:first-child {
+    border-left: 0;
   }
   a.share-btn {
     display: none;
@@ -96,8 +96,6 @@ a svg {
 
 @media (max-width: small-screen) {
   .controls {
-    top: 0;
-    width: 100%;
     a.share-btn {
       flex: none;
       display: flex;
