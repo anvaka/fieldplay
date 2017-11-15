@@ -67,6 +67,7 @@ a svg {
 }
 .controls {
   display: flex;
+  flex-shrink: 0;
   height: control-bar-height;
   width: 100%;
   background-color: window-background;
