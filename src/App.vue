@@ -34,7 +34,7 @@ import bus from './lib/bus';
 import isSmallScreen from './lib/isSmallScreen';
 import VectorView from './components/VectorView';
 import config from './lib/config';
-import createDrag from './lib/drag.js';
+import createDrag from './lib/utils/drag.js';
 
 const MIN_SETTINGS_WIDTH = 395;
 
