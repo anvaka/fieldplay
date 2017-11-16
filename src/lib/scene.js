@@ -306,6 +306,7 @@ export default function initScene(gl) {
       panzoom.dispose();
       window.removeEventListener('resize', onResize, true);
       cursorUpdater.dispose();
+      vectorFieldEditorState.dispose();
   }
 
   function nextFrame() {

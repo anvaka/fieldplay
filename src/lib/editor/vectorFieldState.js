@@ -22,6 +22,7 @@ export default function createVectorFieldEditorState(drawProgram) {
   var api = {
     getCode,
     setCode,
+    dispose,
 
     // These properties are for UI only
     code: currentVectorFieldCode,
@@ -31,6 +32,10 @@ export default function createVectorFieldEditorState(drawProgram) {
   };
 
   return api;
+
+  function dispose() {
+    bus.off('glsl-parser-ready', parseCode);
+  }
 
   function getCode() {
     return appState.getCode();
