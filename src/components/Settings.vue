@@ -136,7 +136,6 @@ import Syntax from './help/Syntax';
 import HelpIcon from './help/Icon';
 
 import { codemirror } from 'vue-codemirror-lite';
-require('codemirror/theme/cobalt.css')
 var CodeMirror = require('codemirror/lib/codemirror.js')
 require('./glslmode')(CodeMirror);
 
@@ -157,7 +156,6 @@ export default {
     bus.on('bbox-change', this.updateBBox, this);
     bus.on('glsl-parser-result-changed', this.updateParserResults, this);
 
-    this.$on('editor-update', this.refreshCode);
     if (soundAvailable) this.soundLoader = new SoundLoader(this.$refs.player);
   },
   beforeDestroy() {
@@ -198,7 +196,7 @@ export default {
       }
 
       this.pendingSetCode = setTimeout(() => {
-        this.sendVectorField();
+        this.scene.updateVectorField(this.vectorField);
         this.pendingSetCode = 0;
       }, 300);
     },
@@ -245,9 +243,6 @@ export default {
     }
   },
   methods: {
-    refreshCode(newCode) {
-      this.vectorField = newCode;
-    },
     moveBoundingBox(key, value) {
       if (this.ignoreBbox) {
         return;
@@ -275,7 +270,6 @@ export default {
         appState.settingsPanel.collapsed = true;
       }
     },
-
     changeColor(e) {
       this.selectedColorMode = e.target.value;
     },
@@ -310,11 +304,6 @@ export default {
         this.ignoreBbox = false
         this.prevBboxReset = 0
       }, 50);
-    },
-
-    sendVectorField() {
-      // it's asynchronous. Results will eventually come.
-      this.scene.updateVectorField(this.vectorField);
     },
 
     updateParserResults(parserResult) {
