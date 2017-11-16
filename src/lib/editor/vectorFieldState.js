@@ -3,7 +3,9 @@ import appState from '../appState';
 import getParsedVectorFieldFunction from './getParsedVectorFieldFunction';
 
 /**
- * A text editor state for the vector field equation.
+ * A text editor state for the vector field equation. Manages vector field
+ * program compilation and error reporting state.
+ *
  * @param {Object} drawProgram 
  */
 export default function createVectorFieldEditorState(drawProgram) {

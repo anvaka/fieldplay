@@ -1,19 +1,9 @@
 <template>
   <div class='settings' :class='{collapsed: settingsPanel.collapsed}'>
-    <div class='block vector-field' v-if='vectorField'>
+    <div class='block vector-field'  v-if='vectorField'>
       <div class='title'>Vector field <a class='reset-all' :class='{"syntax-visible": syntaxHelpVisible}' href='#' @click.prevent='syntaxHelpVisible = !syntaxHelpVisible'>syntax help</a></div>
       <syntax v-if='syntaxHelpVisible' @close='syntaxHelpVisible = false'></syntax>
-<codemirror v-model='vectorField.code' :options="{
-  viewportMargin: Infinity,
-  theme: 'glsl',
-  mode: 'glsl',
-}"></codemirror>
-      <div class='error-container'>
-        <pre v-if='vectorField.error' class='error hl'>{{vectorField.error}}</pre>
-        <pre v-if='vectorField.errorDetail' class='error detail'>{{vectorField.errorDetail}}<span v-if='vectorField.isFloatError'>
-Did you forget to add a dot symbol? E.g. <span class='hl'>10</span> should be <span class='hl'>10.</span> and <span class='hl'>42</span> should be <span class='hl'>42.</span>
-</span></pre>
-      </div>
+      <code-editor :model='vectorField'></code-editor>
     </div>
     <form class='block' @submit.prevent='onSubmit'>
       <div class='title'>Settings<a class='reset-all' href='?'>reset all</a> </div>
@@ -132,10 +122,7 @@ import SoundCloudAudioSource from '../lib/sound/audioSource';
 import config from '../lib/config';
 import Syntax from './help/Syntax';
 import HelpIcon from './help/Icon';
-
-import { codemirror } from 'vue-codemirror-lite';
-var CodeMirror = require('codemirror/lib/codemirror.js')
-require('./glslmode')(CodeMirror);
+import CodeEditor from './CodeEditor';
 
 // Temporary disable this until API is finished.
 const soundAvailable = config.isAudioEnabled;
@@ -146,7 +133,7 @@ export default {
   components: {
     Syntax,
     HelpIcon,
-    codemirror
+    CodeEditor
   },
   mounted() {
     bus.on('scene-ready', this.onSceneReady, this);
@@ -181,15 +168,8 @@ export default {
     };
   },
   watch: {
-    'vectorField.code': function() {
-      if (this.pendingSetCode) {
-        clearTimeout(this.pendingSetCode);
-      }
-
-      this.pendingSetCode = setTimeout(() => {
-        this.vectorField.setCode(this.vectorField.code);
-        this.pendingSetCode = 0;
-      }, 300);
+    'settingsPanel.collapsed': function(newValue) {
+      bus.fire('settings-collapsed', newValue);
     },
     particlesCount(newValue, oldValue) {
       this.scene.setParticlesCount(parseInt(newValue, 10));
