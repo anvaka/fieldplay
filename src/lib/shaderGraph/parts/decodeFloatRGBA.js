@@ -1,3 +1,6 @@
+/**
+ * A shader function to decode rgba encoded color into float position.
+ */
 const code = `
 highp float decodeFloatRGBA( vec4 v ) {
   float a = floor(v.r * 255.0 + 0.5);

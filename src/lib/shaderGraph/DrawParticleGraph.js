@@ -1,7 +1,6 @@
 import decodeFloatRGBA from './parts/decodeFloatRGBA';
+import shaderBasedColor from './shaderBasedColor';
 import ColorModes from '../programs/colorModes';
-import UserDefinedVelocityFunction from './UserDefinedVelocityFunction';
-import RungeKuttaIntegrator from './RungeKuttaIntegrator';
 
 // TODO: this duplicates code from texture position.
 export default class DrawParticleGraph {
@@ -33,7 +32,7 @@ ${mainBody.join('\n')}
 
   getVertexShader(vfCode) {
     let decodePositions = textureBasedPosition();
-    let colorParts = this.isUniformColor ? uniformColor() : textureBasedColor(this.colorMode, vfCode);
+    let colorParts = this.isUniformColor ? uniformColor() : shaderBasedColor(this.colorMode, vfCode);
     let methods = []
     addMethods(decodePositions, methods);
     addMethods(colorParts, methods);
@@ -77,61 +76,6 @@ function addMethods(producer, array) {
 function addMain(producer, array) {
   if (producer.getMain) {
     array.push(producer.getMain());
-  }
-}
-
-function textureBasedColor(colorMode, vfCode) {
-  var udf = new UserDefinedVelocityFunction(vfCode);
-  var integrate = new RungeKuttaIntegrator();
-
-  return {
-    getVariables,
-    getMain,
-    getMethods
-  }
-
-  function getVariables() {
-    let defines = '';
-
-    return `
-uniform sampler2D u_colors;
-uniform vec2 u_velocity_range;
-${defines}
-varying vec4 v_particle_color;
-${udf.getDefines()}
-${integrate.getDefines()}
-`
-  }
-
-  function getMethods() {
-    return `
-// https://github.com/hughsk/glsl-hsv2rgb
-vec3 hsv2rgb(vec3 c) {
-  vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
-  vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
-  return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
-}
-
-${udf.getFunctions()}
-${integrate.getFunctions()}
-`
-  }
-
-  function getMain() {
-    // TODO: This needs to be refactored. I don't like code duplication.
-    let decode = colorMode === ColorModes.VELOCITY ?
-      `
-  float speed = (length(velocity) - u_velocity_range[0])/(u_velocity_range[1] - u_velocity_range[0]);
-  v_particle_color = vec4(hsv2rgb(vec3(0.05 + (1. - speed) * 0.5, 0.9, 1.)), 1.0);
-` : `
-  float speed = (atan(velocity.y, velocity.x) + PI)/(2.0 * PI);
-  v_particle_color = vec4(hsv2rgb(vec3(speed, 0.9, 1.)), 1.0);
-`;
-
-    return `
-vec2 velocity = get_velocity(v_particle_pos);
-${decode}
-`
   }
 }
 
