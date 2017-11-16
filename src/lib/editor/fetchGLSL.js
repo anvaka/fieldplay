@@ -1,5 +1,5 @@
 var loadedLinks = new Map(); // from link to response
-import request from './request';
+import request from '../utils/request';
 
 export default function fetchGLSL(link) {
   if (!link) return Promise.reject('Missing link')

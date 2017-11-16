@@ -1,16 +1,16 @@
 <template>
   <div class='settings' :class='{collapsed: settingsPanel.collapsed}'>
-    <div class='block vector-field'>
+    <div class='block vector-field' v-if='vectorField'>
       <div class='title'>Vector field <a class='reset-all' :class='{"syntax-visible": syntaxHelpVisible}' href='#' @click.prevent='syntaxHelpVisible = !syntaxHelpVisible'>syntax help</a></div>
       <syntax v-if='syntaxHelpVisible' @close='syntaxHelpVisible = false'></syntax>
-<codemirror v-model='vectorField' :options="{
+<codemirror v-model='vectorField.code' :options="{
   viewportMargin: Infinity,
   theme: 'glsl',
   mode: 'glsl',
 }"></codemirror>
-      <div class='error=container'>
-        <pre v-if='error' class='error hl'>{{error}}</pre>
-        <pre v-if='errorDetail' class='error detail'>{{errorDetail}}<span v-if='isFloatError'>
+      <div class='error-container'>
+        <pre v-if='vectorField.error' class='error hl'>{{vectorField.error}}</pre>
+        <pre v-if='vectorField.errorDetail' class='error detail'>{{vectorField.errorDetail}}<span v-if='vectorField.isFloatError'>
 Did you forget to add a dot symbol? E.g. <span class='hl'>10</span> should be <span class='hl'>10.</span> and <span class='hl'>42</span> should be <span class='hl'>42.</span>
 </span></pre>
       </div>
@@ -154,7 +154,6 @@ export default {
     bus.on('scene-ready', this.onSceneReady, this);
     bus.on('generate-field', this.generateNewFunction, this);
     bus.on('bbox-change', this.updateBBox, this);
-    bus.on('glsl-parser-result-changed', this.updateParserResults, this);
 
     if (soundAvailable) this.soundLoader = new SoundLoader(this.$refs.player);
   },
@@ -162,15 +161,11 @@ export default {
     bus.off('scene-ready', this.onSceneReady, this);
     bus.off('generate-field', this.generateNewFunction, this);
     bus.off('bbox-change', this.updateBBox, this);
-    bus.off('glsl-parser-result-changed', this.updateParserResults, this);
   },
   data() {
     return {
-      error: '',
-      errorDetail: '',
       soundCloudLink: 'https://soundcloud.com/mrfijiwiji/yours-truly',
-      isFloatError: false,
-      vectorField: '',
+      vectorField: null,
       settingsPanel: appState.settingsPanel,
       particlesCount: 0,
       fadeOutSpeed: 0,
@@ -190,13 +185,13 @@ export default {
     };
   },
   watch: {
-    vectorField(newValue, oldValue) {
+    'vectorField.code': function() {
       if (this.pendingSetCode) {
         clearTimeout(this.pendingSetCode);
       }
 
       this.pendingSetCode = setTimeout(() => {
-        this.scene.updateVectorField(this.vectorField);
+        this.vectorField.setCode(this.vectorField.code);
         this.pendingSetCode = 0;
       }, 300);
     },
@@ -260,7 +255,7 @@ export default {
       // TODO: Error handling
     },
     generateNewFunction() {
-      this.vectorField = wrapVectorField(generateFunction());
+      this.vectorField.setCode(wrapVectorField(generateFunction()));
     },
     goToOrigin() {
       this.scene.resetBoundingBox();
@@ -279,13 +274,12 @@ export default {
     },
 
     onSceneReady(scene) {
-      this.vectorField = scene.getCurrentCode();
+      this.vectorField = scene.vectorFieldEditorState;
       this.particlesCount = scene.getParticlesCount();
       this.fadeOutSpeed = scene.getFadeOutSpeed();
       this.dropProbability = scene.getDropProbability();
       this.timeStep = scene.getIntegrationTimeStep();
       this.selectedColorMode = scene.getColorMode();
-      this.updateParserResults(scene.getLastParserResult());
       this.updateBBox();
     },
 
@@ -305,18 +299,6 @@ export default {
         this.prevBboxReset = 0
       }, 50);
     },
-
-    updateParserResults(parserResult) {
-      if (parserResult && parserResult.error) {
-        this.error = parserResult.error;
-        this.errorDetail = parserResult.errorDetail;
-        this.isFloatError = parserResult.isFloatError;
-      } else {
-        this.error = '';
-        this.errorDetail = '';
-        this.isFloatError = false;
-      }
-    }
   }
 }
 

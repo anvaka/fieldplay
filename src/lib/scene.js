@@ -13,11 +13,11 @@ import makePanzoom from 'panzoom';
 import bus from './bus';
 import appState from './appState';
 import wglPanZoom from './wglPanZoom';
-import getParsedVectorFieldFunction from './utils/getParsedVectorFieldFunction';
 
 import createScreenProgram from './programs/screenProgram';
 import createDrawParticlesProgram from './programs/drawParticlesProgram';
 import createCursorUpdater from './utils/cursorUpdater';
+import createVectorFieldEditorState from './editor/vectorFieldState';
 
 /**
  * Kicks offs the app rendering. Initialized before even vue is loaded.
@@ -36,7 +36,6 @@ export default function initScene(gl) {
   // This will trigger frame-by-frame recording (it is slow). To stop it, call window.stopRecord();
   bus.on('start-record', startRecord);
   bus.on('stop-record', stopRecord);
-  bus.on('glsl-parser-ready', parseCode);
   var currentCapturer = null;
 
   // TODO: It feels like bounding box management needs to be moved out from here.
@@ -50,8 +49,6 @@ export default function initScene(gl) {
 
   // How many particles do we want?
   var particleCount = appState.getParticleCount();
-  // What is the current code?
-  var currentVectorFieldCode = appState.getCode();
 
   gl.disable(gl.DEPTH_TEST);
   gl.disable(gl.STENCIL_TEST); 
@@ -117,13 +114,7 @@ export default function initScene(gl) {
   var screenProgram = createScreenProgram(ctx);
   var drawProgram = createDrawParticlesProgram(ctx);
   var cursorUpdater = createCursorUpdater(ctx);
-
-  // For delayed parsing result verification (e.g. when vue is loaded it
-  // can request us to see if there were any errors)
-  var parserResult;
-  var currentVectorFieldVersion = 0;
-
-  loadCodeFromAppState();
+  var vectorFieldEditorState = createVectorFieldEditorState(drawProgram);
 
   // particles
   updateParticlesCount(particleCount);
@@ -137,8 +128,6 @@ export default function initScene(gl) {
 
     setPaused,
 
-    updateVectorField,
-    getCurrentCode,
 
     getParticlesCount,
     setParticlesCount,
@@ -155,7 +144,7 @@ export default function initScene(gl) {
     setColorMode,
     getColorMode,
 
-    getLastParserResult,
+    vectorFieldEditorState,
 
     getCanvasRect() {
       // We trust they don't do anything bad with this ...
@@ -176,10 +165,6 @@ export default function initScene(gl) {
   })
 
   return api;
-
-  function getLastParserResult() {
-    return parserResult && parserResult.error;
-  }
 
   function moveBoundingBox(changes) {
     if (!changes) return;
@@ -290,89 +275,6 @@ export default function initScene(gl) {
 
   function getDropProbability() {
     return appState.getDropProbability();
-  }
-
-  // current code;
-  function getCurrentCode() {
-    return appState.getCode();
-  }
-
-  function loadCodeFromAppState() {
-    let persistedCode = appState.getCode();
-    if (persistedCode) {
-      trySetNewCode(persistedCode).then(result => {
-        if (!result.error) return; // This means we set correctly;
-        // If we get here - something went wrong. see the console
-        console.error('Failed to restore previous vector field: ', result.error);
-        // Let's use default vector field
-        trySetNewCode(appState.getDefaultCode());
-      });
-    } else {
-      // we want a default vector field
-      trySetNewCode(appState.getDefaultCode());
-    }
-  }
-
-  function updateVectorField(vectorFieldCode) {
-    if (vectorFieldCode === currentVectorFieldCode) {
-      // If field hasn't changed, let's make sure that there was no previous
-      // error
-      if (parserResult && parserResult.error) {
-        // And if there was error, let's revalidate code:
-        parseCode();
-      }
-      return getLastParserResult();
-    } 
-
-    trySetNewCode(vectorFieldCode).then((result) => {
-      if (result.cancelled) return;
-
-      if (result && result.error) {
-        bus.fire('glsl-parser-result-changed', result.error);
-        return result;
-      }
-
-      currentVectorFieldCode = vectorFieldCode;
-      appState.saveCode(vectorFieldCode);
-    });
-  }
-
-  function parseCode(customCode) {
-    return getParsedVectorFieldFunction(customCode || currentVectorFieldCode)
-      .then(currentResult => {
-        parserResult = currentResult
-        // TODO: I probably don't need to fire this twice.
-        bus.fire('glsl-parser-result-changed', parserResult.error);
-        return parserResult;
-      });
-  }
-
-  function trySetNewCode(vectorFieldCode) {
-    currentVectorFieldVersion += 1;
-    var capturedVersion = currentVectorFieldVersion;
-    // step 1 - run through parser
-    return parseCode(vectorFieldCode).then(parserResult => {
-      if (capturedVersion !== currentVectorFieldVersion) {
-        parserResult.cancelled = true;
-        // a newer request was issued. Ignore these results.
-        return parserResult;
-      }
-
-      if (parserResult.error) {
-        return parserResult;
-      }
-      // step 2 - run through real webgl
-      try {
-        drawProgram.updateCode(parserResult.code);
-        return parserResult;
-      } catch (e) {
-        return {
-          error: {
-            error: e.message
-          }
-        }
-      }
-    });
   }
 
   function onResize() {
