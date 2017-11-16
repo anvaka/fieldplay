@@ -127,8 +127,6 @@ Did you forget to add a dot symbol? E.g. <span class='hl'>10</span> should be <s
 import bus from '../lib/bus';
 import isSmallScreen from '../lib/isSmallScreen';
 import appState from '../lib/appState';
-import generateFunction from '../lib/generate-equation';
-import wrapVectorField from '../lib/wrapVectorField';
 import SoundLoader from '../lib/sound/soundLoader';
 import SoundCloudAudioSource from '../lib/sound/audioSource';
 import config from '../lib/config';
@@ -152,14 +150,12 @@ export default {
   },
   mounted() {
     bus.on('scene-ready', this.onSceneReady, this);
-    bus.on('generate-field', this.generateNewFunction, this);
     bus.on('bbox-change', this.updateBBox, this);
 
     if (soundAvailable) this.soundLoader = new SoundLoader(this.$refs.player);
   },
   beforeDestroy() {
     bus.off('scene-ready', this.onSceneReady, this);
-    bus.off('generate-field', this.generateNewFunction, this);
     bus.off('bbox-change', this.updateBBox, this);
   },
   data() {
@@ -253,9 +249,6 @@ export default {
         this.audioSource.playStream(this.soundLoader.streamUrl())
       });
       // TODO: Error handling
-    },
-    generateNewFunction() {
-      this.vectorField.setCode(wrapVectorField(generateFunction()));
     },
     goToOrigin() {
       this.scene.resetBoundingBox();

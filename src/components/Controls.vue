@@ -21,6 +21,8 @@
 <script>
 import appState from '../lib/appState';
 import bus from '../lib/bus';
+import generateFunction from '../lib/generate-equation';
+import wrapVectorField from '../lib/wrapVectorField';
 
 export default {
   mounted() {
@@ -38,13 +40,13 @@ export default {
 
   methods: {
     onKeyDown(e) {
-      if (e.which === 32 && e.target === document.body) { // ESCAPE
+      if (e.which === 32 && e.target === document.body) { // SPACEBAR
         this.togglePaused();
         e.preventDefault();
       }
     },
     generateNewFunction() {
-      bus.fire('generate-field');
+      window.scene.vectorFieldEditorState.setCode(wrapVectorField(generateFunction()));
     },
     togglePaused() {
       this.paused = !this.paused;
