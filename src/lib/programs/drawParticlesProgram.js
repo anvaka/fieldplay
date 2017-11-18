@@ -5,6 +5,12 @@ import { encodeFloatRGBA } from '../utils/floatPacking.js';
 import config from '../config';
 import createAudioProgram from './audioProgram';
 
+/**
+ * This program manages particles life-cycle. It updates particles positions
+ * and initiates drawing them on screen.
+ * 
+ * @param {Object} ctx rendering context. Holds WebGL state
+ */
 export default function drawParticlesProgram(ctx) {
   var gl = ctx.gl;
 

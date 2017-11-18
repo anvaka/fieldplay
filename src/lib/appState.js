@@ -3,6 +3,11 @@ import bus from './bus';
 import ColorModes from './programs/colorModes';
 import wrapVectorField from './wrapVectorField';
 
+/**
+ * The state of the fieldplay is stored in the query string. This is the
+ * only place where query string can be manipulated or fetched.
+ */
+
 var qs = queryState({}, {
   useSearch: true,
   // Older version of the app used hash to store application arguments.

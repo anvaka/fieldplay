@@ -1,5 +1,6 @@
 /**
- * A tiny toy equation generator
+ * A tiny toy equation generator. It is very naive, and does silly things
+ * sometimes. Feel free to improve.
  */
 
 var cfProb = 10; // base probability to generate a point.

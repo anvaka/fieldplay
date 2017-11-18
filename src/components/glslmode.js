@@ -1,7 +1,8 @@
 /**
  * Copyright (C) 2014 hughsk, MIT license
- * 
  * https://github.com/hughsk/glsl-editor/blob/master/LICENSE.md
+ * 
+ * This file provides glsl syntax highlight for code-mirror.
  */
 module.exports = function(CodeMirror) {
   CodeMirror.defineMode("glsl", function(config, parserConfig) {
