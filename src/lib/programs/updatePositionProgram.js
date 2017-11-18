@@ -79,8 +79,10 @@ export default function updatePositionProgram(ctx) {
   
     util.bindAttribute(gl, ctx.quadBuffer, program.a_pos, 2);
   
+    ctx.inputs.updateBindings(program);
+
+    // TODO: Remove this.
     if (ctx.audioTexture) {
-      // TODO: I need to manage inputs better. E.g. color program might also need it.
       util.bindTexture(gl, ctx.audioTexture, 5);
       gl.uniform1i(program['u_audio'], 5);
     }
@@ -130,6 +132,7 @@ export default function updatePositionProgram(ctx) {
   }
 
   function processVectorLinesRequest(program) {
+    // TODO: Move this out
     var dimensions = [{
       name: 'x',
       particleState: pendingVectorLines.x

@@ -37,6 +37,8 @@ import {
   vec4 cursor;
   vec2 rotate(vec2 p,float a);
   float audio(float index);
+  sampler2D input0;
+  sampler2D input1;
 }`;
 
 /**

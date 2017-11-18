@@ -18,6 +18,8 @@ import createScreenProgram from './programs/screenProgram';
 import createDrawParticlesProgram from './programs/drawParticlesProgram';
 import createCursorUpdater from './utils/cursorUpdater';
 import createVectorFieldEditorState from './editor/vectorFieldState';
+import createInputCollection from './programs/inputs/inputCollection';
+// import createImageInputBinding from './programs/inputs/imageInput';
 
 /**
  * Kicks offs the app rendering. Initialized before even vue is loaded.
@@ -73,9 +75,6 @@ export default function initScene(gl) {
     // TODO: I need to find a better way to manage this.
     screenTextureUnit: 3,
 
-    // This is where color texture needs to be bound.
-    colorTextureUnit: 2,
-
     integrationTimeStep: appState.getIntegrationTimeStep(),
 
     // On each frame the likelihood for a particle to reset its position is this:
@@ -99,6 +98,9 @@ export default function initScene(gl) {
 
     // How quickly we should fade previous frame (from 0..1)
     fadeOpacity: appState.getFadeout(),
+
+    // Allows to bind media elements to vector field
+    inputs: createInputCollection(),
 
     // Ignore this one for a moment. Yes, the app support web audio API,
     // but it's rudimentary, so... shhh! it's a secret.
@@ -156,6 +158,12 @@ export default function initScene(gl) {
       return ctx.bbox;
     }
   }
+
+  ctx.inputs.setContext(ctx);
+
+
+  //ctx.inputs.bindInput(0, createImageInputBinding(ctx, 'https://i.imgur.com/Rnj7kZj.jpg'))
+  
 
   var panzoom = initPanzoom(); 
   restoreBBox();

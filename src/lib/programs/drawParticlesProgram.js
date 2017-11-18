@@ -55,6 +55,7 @@ export default function drawParticlesProgram(ctx) {
     ctx.frame += 1
     ctx.frameSeed = Math.random();
 
+    // TODO: Remove this.
     if (audioProgram) audioProgram.updateTextures();
 
     updatePositionProgram.updateParticlesPositions();
@@ -104,6 +105,7 @@ export default function drawParticlesProgram(ctx) {
     util.bindAttribute(gl, particleIndexBuffer, program.a_index, 1);
     
     updatePositionProgram.prepareToDraw(program);
+    ctx.inputs.updateBindings(program);
   
     gl.uniform1f(program.u_h, ctx.integrationTimeStep);
     gl.uniform1f(program.frame, ctx.frame);

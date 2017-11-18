@@ -1,5 +1,6 @@
 import BaseShaderNode from './BaseShaderNode';
 import snoise from './parts/simplex-noise';
+import {getInputUniforms} from './customInput';
 
 export default class UserDefinedVelocityFunction extends BaseShaderNode {
   constructor(updateCode) {
@@ -15,9 +16,12 @@ export default class UserDefinedVelocityFunction extends BaseShaderNode {
     return `
 uniform float frame;
 uniform vec4 cursor;
+// TODO: use inputN instead.
 uniform sampler2D u_audio;
 
 #define PI 3.1415926535897932384626433832795
+
+${getInputUniforms()}
 `
   }
 
