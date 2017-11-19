@@ -19,6 +19,7 @@ import createDrawParticlesProgram from './programs/drawParticlesProgram';
 import createCursorUpdater from './utils/cursorUpdater';
 import createVectorFieldEditorState from './editor/vectorFieldState';
 import createInputCollection from './programs/inputs/inputCollection';
+// import createVideoInput from './programs/inputs/videoInput';
 // import createImageInputBinding from './programs/inputs/imageInput';
 
 /**
@@ -161,9 +162,9 @@ export default function initScene(gl) {
 
   ctx.inputs.setContext(ctx);
 
+//  ctx.inputs.bindInput(0, createImageInputBinding(ctx, 'https://i.imgur.com/E8n8n5I.png'))
+ // ctx.inputs.bindInput(0, createVideoInput(ctx, 'https://i.imgur.com/b2Vmg94.mp4'))
 
-  //ctx.inputs.bindInput(0, createImageInputBinding(ctx, 'https://i.imgur.com/Rnj7kZj.jpg'))
-  
 
   var panzoom = initPanzoom(); 
   restoreBBox();

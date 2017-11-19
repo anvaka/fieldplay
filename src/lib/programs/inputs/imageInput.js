@@ -1,7 +1,8 @@
 import loadTexture from "./loadTexture";
 import glUtils from '../../gl-utils';
+import config from '../../config';
 
-const FREE_TEXTURE_UNIT = 4;
+const FREE_TEXTURE_UNIT = config.FREE_TEXTURE_UNIT;
 
 export default function createImageInputBinding(ctx, url) {
   var texture = loadTexture(ctx.gl, url);
