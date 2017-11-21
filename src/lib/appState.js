@@ -20,6 +20,10 @@ var qs = queryState({}, {
 
 var currentState = qs.get();
 
+if (currentState.ui === 0) {
+  document.querySelector('html').classList.add('no-ui');
+}
+
 var defaultVectorField = wrapVectorField(`v.x = 0.1 * p.y;
   v.y = -0.2 * p.y;`);
 

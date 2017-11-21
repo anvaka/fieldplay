@@ -152,6 +152,14 @@ a.about-link {
   left: 7px;
   bottom: 26px;
 }
+
+.no-ui {
+  a.about-link,
+  .controls-container {
+    display: none;
+  }
+}
+
 @media (max-width: small-screen) {
   a.about-link {
     bottom: 14px;
