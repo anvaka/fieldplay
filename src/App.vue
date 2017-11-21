@@ -63,7 +63,7 @@ export default {
     return {
       scene: null,
       width: MIN_SETTINGS_WIDTH,
-      webGLEnabled: window.webgGLEnabled,
+      webGLEnabled: window.webGLEnabled,
       aboutVisible: false,
       vectorLinesEnabled: config.vectorLinesEnabled
     };
