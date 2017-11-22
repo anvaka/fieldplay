@@ -1,5 +1,5 @@
 /**
- * This module allows pass mouse coordinates down to the shader. Coordinates
+ * This module allows to pass mouse coordinates down to the shader. Coordinates
  * will be available as `vec4 cursor` variable, where `xy` are the last
  * click position, and `zw` are the last hover position.
  * 

@@ -1,3 +1,8 @@
+/**
+ * XMLHttpRequest wrapped into a promise.
+ * 
+ * @param {String} url 
+ */
 export default function request(url, options) {
   if (!options) options = {};
 

@@ -1,3 +1,7 @@
+/**
+ * Collection of input bindings. Individual program works with this collection
+ * to command it update texture bindings.
+ */
 export default function createInputCollection() {
   var boundInputs = new Map() 
   var ctx;
