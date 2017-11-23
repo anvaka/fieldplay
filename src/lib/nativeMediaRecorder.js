@@ -1,3 +1,9 @@
+/**
+ * This API allows to record vector field locally.
+ * 
+ * See https://github.com/anvaka/fieldplay/blob/master/ScreenRecording.md for more details
+ * @param {HTMLCanvas} canvas 
+ */
 export default function saveVideo(canvas) {
   var recordedChunks = [];
 

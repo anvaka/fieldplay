@@ -12,7 +12,8 @@ I built in video recorder into the website. It can only be started from develope
 in your browser. When frame is rendered, a screenshot is sent to the server to build a movie.
 
 Unfortunately I don't have spare capacity to host the server, so if you want to record a video,
-you'll need to follow these instructions
+you'll need to follow these instructions. NOTE: This approach will not likely work from hosted
+application (i.e. anvaka.github.io/fieldplay). Set up repository [locally](https://github.com/anvaka/fieldplay#local-development).
 
 **Step 1:** Make sure you have [node.js](https://nodejs.org/) installed. 
 
