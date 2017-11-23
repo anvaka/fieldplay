@@ -40,6 +40,7 @@ export default {
   settingsPanel,
   saveBBox,
   getBBox,
+  getQS() { return qs; },
   saveCode,
   getCode,
   getDefaultCode,
@@ -60,7 +61,7 @@ export default {
   setColorMode
 }
 
-qs.onChange(function(appState) {
+qs.onChange(function() {
   bus.fire('scene-ready', window.scene);
 });
 
