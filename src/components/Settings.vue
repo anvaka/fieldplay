@@ -5,6 +5,10 @@
       <syntax v-if='syntaxHelpVisible' @close='syntaxHelpVisible = false'></syntax>
       <code-editor :model='vectorField'></code-editor>
     </div>
+    <div class='block' v-if='showBindings'>
+      <div class='title'>Inputs</div>
+      <Inputs :vm='inputsModel'></Inputs>
+    </div>
     <form class='block' @submit.prevent='onSubmit'>
       <div class='title'>Settings<a class='reset-all' href='?'>reset all</a> </div>
       <div class='row'>
@@ -123,6 +127,7 @@ import config from '../lib/config';
 import Syntax from './help/Syntax';
 import HelpIcon from './help/Icon';
 import CodeEditor from './CodeEditor';
+import Inputs from './Inputs';
 
 // Temporary disable this until API is finished.
 const soundAvailable = config.isAudioEnabled;
@@ -133,7 +138,8 @@ export default {
   components: {
     Syntax,
     HelpIcon,
-    CodeEditor
+    CodeEditor,
+    Inputs
   },
   mounted() {
     bus.on('scene-ready', this.onSceneReady, this);
@@ -150,6 +156,8 @@ export default {
       soundCloudLink: 'https://soundcloud.com/mrfijiwiji/yours-truly',
       vectorField: null,
       settingsPanel: appState.settingsPanel,
+      inputsModel: scene.inputsModel,
+      showBindings: config.showBindings,
       particlesCount: 0,
       fadeOutSpeed: 0,
       dropProbability: 0,

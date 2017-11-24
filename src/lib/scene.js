@@ -18,9 +18,7 @@ import createScreenProgram from './programs/screenProgram';
 import createDrawParticlesProgram from './programs/drawParticlesProgram';
 import createCursorUpdater from './utils/cursorUpdater';
 import createVectorFieldEditorState from './editor/vectorFieldState';
-import createInputCollection from './programs/inputs/inputCollection';
-// import createVideoInput from './programs/inputs/videoInput';
-// import createImageInputBinding from './programs/inputs/imageInput';
+import createInputsModel from './createInputsModel';
 
 /**
  * Kicks offs the app rendering. Initialized before even vue is loaded.
@@ -64,6 +62,8 @@ export default function initScene(gl) {
     bbox,
     canvasRect,
 
+    inputs: null,
+
     framebuffer: gl.createFramebuffer(),
 
     // This is used only to render full-screen rectangle. Main magic happens inside textures.
@@ -100,9 +100,6 @@ export default function initScene(gl) {
     // How quickly we should fade previous frame (from 0..1)
     fadeOpacity: appState.getFadeout(),
 
-    // Allows to bind media elements to vector field
-    inputs: createInputCollection(),
-
     // Ignore this one for a moment. Yes, the app support web audio API,
     // but it's rudimentary, so... shhh! it's a secret.
     // Don't shhh on me!
@@ -112,6 +109,8 @@ export default function initScene(gl) {
   // Frame management
   var lastAnimationFrame;
   var isPaused = false;
+
+  var inputsModel = createInputsModel(ctx);
 
   // screen rendering;
   var screenProgram = createScreenProgram(ctx);
@@ -126,11 +125,11 @@ export default function initScene(gl) {
     start: nextFrame,
     stop,
     dispose,
+
     resetBoundingBox,
     moveBoundingBox,
 
     setPaused,
-
 
     getParticlesCount,
     setParticlesCount,
@@ -149,6 +148,8 @@ export default function initScene(gl) {
 
     vectorFieldEditorState,
 
+    inputsModel,
+
     getCanvasRect() {
       // We trust they don't do anything bad with this ...
       return canvasRect;
@@ -159,12 +160,6 @@ export default function initScene(gl) {
       return ctx.bbox;
     }
   }
-
-  ctx.inputs.setContext(ctx);
-
-//  ctx.inputs.bindInput(0, createImageInputBinding(ctx, 'https://i.imgur.com/E8n8n5I.png'))
- // ctx.inputs.bindInput(0, createVideoInput(ctx, 'https://i.imgur.com/b2Vmg94.mp4'))
-
 
   var panzoom = initPanzoom(); 
   restoreBBox();

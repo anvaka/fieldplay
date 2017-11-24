@@ -4,15 +4,10 @@
  */
 export default function createInputCollection() {
   var boundInputs = new Map() 
-  var ctx;
   var currentProgram;
   return {
     updateBindings,
     bindInput,
-    setContext(newCtx) {
-      if (ctx) throw new Error('Context is already set');
-      ctx = newCtx;
-    }
   }
 
   function bindInput(inputIndex, inputBinding) {
