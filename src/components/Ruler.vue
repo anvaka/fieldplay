@@ -11,42 +11,42 @@
 <script>
 import bus from '../lib/bus';
 
-  export default {
-    name: 'Ruler',
-    mounted() {
-      bus.on('bbox-change', this.recomupteLabels, this);
-    },
-    beforeDestroy() {
-      bus.off('bbox-change', this.recomupteLabels, this);
-    },
+export default {
+  name: 'Ruler',
+  mounted() {
+    bus.on('bbox-change', this.recomputeLabels, this);
+  },
+  beforeDestroy() {
+    bus.off('bbox-change', this.recomputeLabels, this);
+  },
 
-    data() {
-      return {
-        hticks: [],
-        vticks: [],
-        highlighted: false
-      };
-    },
-    methods: {
-      recomupteLabels(bbox) {
-        let {minX, minY, maxX, maxY} = bbox;
-        if (this.clearHighlight) {
-          clearTimeout(this.clearHighlight);
-          this.clearHighlight = null;
-        }
-
-        
-        this.highlighted = true;
-        var canvasRect = window.scene.getCanvasRect();
-        this.hticks = getHorizontalTicks(canvasRect, minX, maxX);
-        this.vticks = getVerticalTicks(canvasRect, minY, maxY);
-        this.clearHighlight = setTimeout(() => {
-          this.highlighted = false;
-          this.clearHighlight = null;
-        }, 1500);
+  data() {
+    return {
+      hticks: [],
+      vticks: [],
+      highlighted: false
+    };
+  },
+  methods: {
+    recomputeLabels(bbox) {
+      let {minX, minY, maxX, maxY} = bbox;
+      if (this.clearHighlight) {
+        clearTimeout(this.clearHighlight);
+        this.clearHighlight = null;
       }
+
+      
+      this.highlighted = true;
+      var canvasRect = window.scene.getCanvasRect();
+      this.hticks = getHorizontalTicks(canvasRect, minX, maxX);
+      this.vticks = getVerticalTicks(canvasRect, minY, maxY);
+      this.clearHighlight = setTimeout(() => {
+        this.highlighted = false;
+        this.clearHighlight = null;
+      }, 1500);
     }
   }
+}
 
 function getHorizontalTicks(rect, minX, maxX) {
   var availableWidth = rect.width;
