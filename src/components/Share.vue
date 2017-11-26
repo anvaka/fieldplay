@@ -252,6 +252,12 @@ function getProviders() {
   }
 }
 
+.no-ui {
+  .share-container {
+    display: none;
+  }
+}
+
 @media (max-width: small-screen) {
   .share-container {
     display: none;
