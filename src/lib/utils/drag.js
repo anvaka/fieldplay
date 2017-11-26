@@ -15,13 +15,15 @@ export default function createDrag(owner, onDrag) {
   let mouseY;
   let touchInProgress = false;
 
-  listenForEvents();
+  if (owner) listenForEvents();
 
   return {
     dispose
   };
 
   function dispose() {
+    if (!owner) return;
+
     releaseDocumentMouse();
     releaseTouches();
 

@@ -9,7 +9,7 @@
 </p>
       </div>
     </div>
-    <div v-if='webGLEnabled'>
+    <div v-if='webGLEnabled && !hideUI'>
       <vector-view v-if='vectorLinesEnabled'></vector-view>
       <ruler></ruler>
       <a href='#' @click.prevent='aboutVisible = !aboutVisible' class='about-link'>about...</a>
@@ -35,6 +35,7 @@ import isSmallScreen from './lib/isSmallScreen';
 import VectorView from './components/VectorView';
 import config from './lib/config';
 import createDrag from './lib/utils/drag.js';
+import appState from './lib/appState';
 
 const MIN_SETTINGS_WIDTH = 395;
 
@@ -65,6 +66,7 @@ export default {
       width: MIN_SETTINGS_WIDTH,
       webGLEnabled: window.webGLEnabled,
       aboutVisible: false,
+      hideUI: appState.getQS().get('ui') === 0,
       vectorLinesEnabled: config.vectorLinesEnabled
     };
   },
@@ -151,13 +153,6 @@ a.about-link {
   position: absolute;
   left: 7px;
   bottom: 26px;
-}
-
-.no-ui {
-  a.about-link,
-  .controls-container {
-    display: none;
-  }
 }
 
 @media (max-width: small-screen) {
