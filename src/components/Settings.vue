@@ -375,7 +375,7 @@ help-background = rgb(7, 12, 23);
     float: right;
     font-size: 12px;
     font-style: italic;
-    color: #267fcd;
+    color: help-text-color;
     height: 30px;
     margin: -5px;
     padding: 7px;
@@ -484,7 +484,7 @@ a.help-icon {
     bottom: 0;
     font-size: 12px;
     left: 0;
-    color: #435970;
+    color: ternary-text;
   }
   .reset {
     font-size: 16px;
