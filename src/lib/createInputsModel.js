@@ -15,7 +15,14 @@ export default function createInputsModel(ctx) {
 
   function setBinding(bindingNumber, bindingLink) {
     // TODO: Error checking
-    var binding = createImageInputBinding(ctx, bindingLink);
+    var binding = createImageInputBinding(ctx, bindingLink, {
+      done() {
+        console.log('ok');
+      },
+      error(err) {
+        console.log('error', err);
+      }
+    });
     inputs.bindInput(bindingNumber, binding);
   }
 }
