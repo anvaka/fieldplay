@@ -1,3 +1,6 @@
+/**
+ * Creates a single image binding element in the input collection.
+ */
 import loadTexture from "./loadTexture";
 import glUtils from '../../gl-utils';
 import config from '../../config';

@@ -1,11 +1,16 @@
 <template>
   <div>
-    <div class='input-border'>
+    <div class='title'>Inputs</div>
+    <div class='input-border' v-for='input in inputs'>
       <div class='col full'>
-        <input type='text' class='link' placeholder="Enter link to image here" v-model='input0Link' @keyup.enter='onSubmit' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-        <div class='label'>input0</div>
+        <input type='text' class='link' placeholder="Enter link to image here" v-model='input.link' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" @change='input.updateBinding()'>
+        <div class='label'>{{input.name}}</div>
+      </div>
+      <div v-if='input.error'>
+        Error!
       </div>
     </div>
+    <div><a href="#" @click.prevent='addInput()'>Add image</a></div>
   </div>
 </template>
 
@@ -19,21 +24,23 @@ export default {
     }
   },
   data() {
+    var vm = this.vm;
     return {
-      input0Link: ''
+      inputs: vm.getInputs(),
+      addInput: vm.addInput
     };
   },
   watch: {
-    input0Link() {
-      if (this.pendingUpdate) {
-        clearTimeout(this.pendingUpdate);
-      }
+    // input0Link() {
+    //   if (this.pendingUpdate) {
+    //     clearTimeout(this.pendingUpdate);
+    //   }
 
-      this.pendingUpdate = setTimeout(() => {
-        this.vm.setBinding(0, this.input0Link);
-        this.pendingUpdate = 0;
-      }, 500);
-    }
+    //   this.pendingUpdate = setTimeout(() => {
+    //     this.vm.setBinding(0, this.input0Link);
+    //     this.pendingUpdate = 0;
+    //   }, 500);
+    // }
   },
   methods: {
     onSubmit() {

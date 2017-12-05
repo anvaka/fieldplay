@@ -6,7 +6,6 @@
       <code-editor :model='vectorField'></code-editor>
     </div>
     <div class='block' v-if='showBindings'>
-      <div class='title'>Inputs</div>
       <Inputs :vm='inputsModel'></Inputs>
     </div>
     <form class='block' @submit.prevent='onSubmit'>
