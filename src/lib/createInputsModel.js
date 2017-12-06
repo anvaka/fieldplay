@@ -10,7 +10,6 @@ export default function createInputsModel(ctx) {
   var api = {
     getInputs,
     addInput,
-    setBinding
   };
 
   return api;
@@ -20,24 +19,14 @@ export default function createInputsModel(ctx) {
   }
 
   function addInput() {
-    inputs.push(createInputElementViewModel());
+    inputs.push(createInputElementViewModel(ctx));
   }
 
-  function setBinding(bindingNumber, bindingLink) {
-    // TODO: Error checking
-    var binding = createImageInputBinding(ctx, bindingLink, {
-      done() {
-        console.log('ok');
-      },
-      error(err) {
-        console.log('error', err);
-      }
-    });
-    inputs.bindInput(bindingNumber, binding);
-  }
 }
 
-function createInputElementViewModel() {
+function createInputElementViewModel(ctx) {
+  var pendingUpdate = null;
+
   var input = {
     link: '',
     error: null,
@@ -48,6 +37,27 @@ function createInputElementViewModel() {
   return input;
 
   function updateBinding() {
-    console.log(input.link);
+    if (pendingUpdate) {
+      clearTimeout(pendingUpdate);
+      pendingUpdate = null;
+    }
+
+    pendingUpdate = setTimeout(setBinding, 300);
+  }
+
+  function setBinding() {
+    input.error = null;
+    pendingUpdate = null;
+    var binding = createImageInputBinding(ctx, input.link, {
+      done() {
+        // TODO: Preview
+        console.log('ok');
+      },
+      error(err) {
+        // TODO: Better Error checking
+        input.error = err;
+      }
+    });
+    ctx.inputs.bindInput(0, binding);
   }
 }

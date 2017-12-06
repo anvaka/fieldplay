@@ -10,7 +10,7 @@
         Error!
       </div>
     </div>
-    <div><a href="#" @click.prevent='addInput()'>Add image</a></div>
+    <div v-if='canAddMore'><a href="#" @click.prevent='addInput()'>Add image</a></div>
   </div>
 </template>
 
@@ -18,9 +18,9 @@
 export default {
   name: 'Inputs',
   props: ['vm'],
-  beforeDestroy() {
-    if (this.pendingUpdate) {
-      clearTimeout(this.pendingUpdate);
+  computed: {
+    canAddMore() {
+      return this.inputs.length < 1;
     }
   },
   data() {
@@ -29,18 +29,6 @@ export default {
       inputs: vm.getInputs(),
       addInput: vm.addInput
     };
-  },
-  watch: {
-    // input0Link() {
-    //   if (this.pendingUpdate) {
-    //     clearTimeout(this.pendingUpdate);
-    //   }
-
-    //   this.pendingUpdate = setTimeout(() => {
-    //     this.vm.setBinding(0, this.input0Link);
-    //     this.pendingUpdate = 0;
-    //   }, 500);
-    // }
   },
   methods: {
     onSubmit() {
