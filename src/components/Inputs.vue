@@ -42,9 +42,6 @@ export default {
 @import "./shared.styl";
 
 .input-border {
-  margin-top: 10px;
-  padding-top: 10px;
-
   .label {
     font-size: small;
     color: ternary-text;
