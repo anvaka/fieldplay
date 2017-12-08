@@ -7,10 +7,10 @@
         <div class='label'>{{input.name}}</div>
       </div>
       <div v-if='input.error'>
-        Error!
+        Failed to load image.
       </div>
     </div>
-    <div v-if='canAddMore'><a href="#" @click.prevent='addInput()'>Add image</a></div>
+    <div v-if='canAddMore'><a href="#" @click.prevent='vm.addInput'>Add image</a></div>
   </div>
 </template>
 
@@ -26,8 +26,7 @@ export default {
   data() {
     var vm = this.vm;
     return {
-      inputs: vm.getInputs(),
-      addInput: vm.addInput
+      inputs: vm.getInputs()
     };
   },
   methods: {

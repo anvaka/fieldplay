@@ -21,7 +21,6 @@ export default function createInputsModel(ctx) {
   function addInput() {
     inputs.push(createInputElementViewModel(ctx));
   }
-
 }
 
 function createInputElementViewModel(ctx) {
