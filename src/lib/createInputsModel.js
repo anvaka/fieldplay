@@ -1,6 +1,7 @@
 import createInputCollection from './programs/inputs/inputCollection';
 import createVideoInput from './programs/inputs/videoInput';
 import createImageInputBinding from './programs/inputs/imageInput';
+import appState from './appState.js';
 
 // Allows to bind media elements to vector field
 export default function createInputsModel(ctx) {
@@ -25,11 +26,12 @@ export default function createInputsModel(ctx) {
 
 function createInputElementViewModel(ctx) {
   var pendingUpdate = null;
+  var inputNumber = 0;
 
   var input = {
     link: '',
     error: null,
-    name: 'input0',
+    name: `input${inputNumber}`,
     updateBinding
   }
 
@@ -50,6 +52,7 @@ function createInputElementViewModel(ctx) {
     var binding = createImageInputBinding(ctx, input.link, {
       done() {
         // TODO: Preview
+        appState.getQS().set(`i${inputNumber}`, input.link);
         console.log('ok');
       },
       error(err) {
