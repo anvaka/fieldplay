@@ -1,24 +1,29 @@
 // https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Using_textures_in_WebGL
 export default function loadTexture(gl, url) {
-  const texture = gl.createTexture();
-  gl.bindTexture(gl.TEXTURE_2D, texture);
+  var resolveTexture, rejectTexture;
 
-  const level = 0;
-  const internalFormat = gl.RGBA;
-  const width = 1;
-  const height = 1;
-  const border = 0;
-  const srcFormat = gl.RGBA;
-  const srcType = gl.UNSIGNED_BYTE;
-  const pixel = new Uint8Array([0, 0, 255, 255]);  // opaque blue
-  gl.texImage2D(gl.TEXTURE_2D, level, internalFormat,
-                width, height, border, srcFormat, srcType,
-                pixel);
-
-  const image = new Image();
+  var image = new Image();
   image.crossOrigin = '';
 
-  image.onload = function() {
+  image.onload = bindTexture;
+  image.onerror = reportError;
+  image.src = url;
+
+  return new Promise((resolve, reject) => {
+    resolveTexture = resolve;
+    rejectTexture = reject;
+  });
+
+  function reportError(err) {
+    rejectTexture(err);
+  }
+
+  function bindTexture() {
+    var texture = gl.createTexture();
+    var level = 0;
+    var internalFormat = gl.RGBA;
+    var srcFormat = gl.RGBA;
+    var srcType = gl.UNSIGNED_BYTE;
     gl.bindTexture(gl.TEXTURE_2D, texture);
     gl.texImage2D(gl.TEXTURE_2D, level, internalFormat,
                   srcFormat, srcType, image);
@@ -30,10 +35,9 @@ export default function loadTexture(gl, url) {
        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     }
-  };
-  image.src = url;
 
-  return texture;
+    resolveTexture(texture);
+  }
 }
 
 function isPowerOf2(value) {

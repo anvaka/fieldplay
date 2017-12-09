@@ -1,10 +1,10 @@
 /**
  * This file is based on https://github.com/mapbox/webgl-wind
  * by Vladimir Agafonkin
- * 
+ *
  * Released under ISC License, Copyright (c) 2016, Mapbox
  * https://github.com/mapbox/webgl-wind/blob/master/LICENSE
- * 
+ *
  * Adapted to field maps by Andrei Kashcha
  * Copyright (C) 2017
  */
@@ -22,8 +22,8 @@ import createInputsModel from './createInputsModel';
 
 /**
  * Kicks offs the app rendering. Initialized before even vue is loaded.
- * 
- * @param {WebGLRenderingContext} gl 
+ *
+ * @param {WebGLRenderingContext} gl
  */
 export default function initScene(gl) {
   // Canvas size management
@@ -32,7 +32,7 @@ export default function initScene(gl) {
   window.addEventListener('resize', onResize, true);
 
   // Video capturing is available in super advanced mode. You'll need to install
-  // and start https://github.com/greggman/ffmpegserver.js 
+  // and start https://github.com/greggman/ffmpegserver.js
   // Then type in the console: window.startRecord();
   // This will trigger frame-by-frame recording (it is slow). To stop it, call window.stopRecord();
   bus.on('start-record', startRecord);
@@ -52,7 +52,7 @@ export default function initScene(gl) {
   var particleCount = appState.getParticleCount();
 
   gl.disable(gl.DEPTH_TEST);
-  gl.disable(gl.STENCIL_TEST); 
+  gl.disable(gl.STENCIL_TEST);
 
   // Context variable is a way to share rendering state between multiple programs. It has a lot of stuff on it.
   // I found that it's the easiest way to work in state-full world of WebGL.
@@ -84,7 +84,7 @@ export default function initScene(gl) {
     // current frame number. Reset every time when new shader is compiled
     frame: 0,
 
-    // Information about mouse cursor. Could be useful to simplify 
+    // Information about mouse cursor. Could be useful to simplify
     // exploration
     cursor: {
       // Where mouse was last time clicked (or tapped)
@@ -161,7 +161,7 @@ export default function initScene(gl) {
     }
   }
 
-  var panzoom = initPanzoom(); 
+  var panzoom = initPanzoom();
   restoreBBox();
 
   setTimeout(() => {
@@ -351,6 +351,7 @@ export default function initScene(gl) {
 
   function initPanzoom() {
     let initializedPanzoom = makePanzoom(gl.canvas, {
+      realPinch: true,
       zoomSpeed: 0.025,
       controller: wglPanZoom(gl.canvas, updateBoundingBox)
     });

@@ -15,7 +15,7 @@
     "autosize": "^4.0.0",
     "glsl-parser": "git+https://github.com/anvaka/glslx.git#glsl-parser",
     "ngraph.events": "0.0.4",
-    "panzoom": "^3.0.0",
+    "panzoom": "^4.0.0",
     "query-state": "^4.0.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",

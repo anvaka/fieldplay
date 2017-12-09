@@ -1,10 +1,16 @@
 <template>
   <div>
-    <div class='row'>
-        <div class='col'>input0</div>
-        <div class='col full'>
-          <input type='text' placeholder="Enter link to image here" v-model='input0Link' @keyup.enter='onSubmit' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
+    <div class='title'>Inputs</div>
+    <div class='input-border' v-for='input in inputs'>
+      <div class='col full'>
+        <input type='text' class='link' placeholder="Enter link to image here" v-model='input.link' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" @change='input.updateBinding()'>
+        <div class='label'>{{input.name}}</div>
+      </div>
+      <div v-if='input.error'>
+        Failed to load image.
+      </div>
     </div>
+    <div v-if='canAddMore'><a href="#" @click.prevent='vm.addInput'>Add image</a></div>
   </div>
 </template>
 
@@ -12,27 +18,16 @@
 export default {
   name: 'Inputs',
   props: ['vm'],
-  beforeDestroy() {
-    if (this.pendingUpdate) {
-      clearTimeout(this.pendingUpdate);
+  computed: {
+    canAddMore() {
+      return this.inputs.length < 1;
     }
   },
   data() {
+    var vm = this.vm;
     return {
-      input0Link: ''
+      inputs: vm.getInputs()
     };
-  },
-  watch: {
-    input0Link() {
-      if (this.pendingUpdate) {
-        clearTimeout(this.pendingUpdate);
-      }
-
-      this.pendingUpdate = setTimeout(() => {
-        this.vm.setBinding(0, this.input0Link);
-        this.pendingUpdate = 0;
-      }, 500);
-    }
   },
   methods: {
     onSubmit() {
@@ -41,3 +36,25 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus">
+@import "./shared.styl";
+
+.input-border {
+  .label {
+    font-size: small;
+    color: ternary-text;
+  }
+
+  input[type='text'].link {
+    margin-left: 0;
+    &:focus {
+      outline: none;
+      border: 0px transparent;
+    }
+    &::placeholder {
+      color: ternary-text;
+    }
+  }
+}
+</style>
