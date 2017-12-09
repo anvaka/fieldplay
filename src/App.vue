@@ -36,6 +36,7 @@ import VectorView from './components/VectorView';
 import config from './lib/config';
 import createDrag from './lib/utils/drag.js';
 import appState from './lib/appState';
+import { initAutoMode } from './lib/autoMode';
 
 const MIN_SETTINGS_WIDTH = 395;
 
@@ -51,6 +52,8 @@ export default {
       this.width += dx;
       if (this.width < MIN_SETTINGS_WIDTH) this.width = MIN_SETTINGS_WIDTH;
     });
+
+    initAutoMode();
   },
   beforeDestroy() {
     this.resizer.dispose();
