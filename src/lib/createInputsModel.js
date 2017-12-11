@@ -19,14 +19,13 @@ export default function createInputsModel(ctx) {
     return inputs;
   }
 
-  function addInput() {
-    inputs.push(createInputElementViewModel(ctx));
+  function addInput(inputNumber) {
+    inputs.push(createInputElementViewModel(ctx, inputNumber));
   }
 }
 
-function createInputElementViewModel(ctx) {
+function createInputElementViewModel(ctx, inputNumber) {
   var pendingUpdate = null;
-  var inputNumber = 0;
 
   var input = {
     link: '',
@@ -53,7 +52,6 @@ function createInputElementViewModel(ctx) {
       done() {
         // TODO: Preview
         appState.getQS().set(`i${inputNumber}`, input.link);
-        console.log('ok');
       },
       error(err) {
         // TODO: Better Error checking
