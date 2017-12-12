@@ -7,6 +7,7 @@ import appState from './appState.js';
 export default function createInputsModel(ctx) {
   ctx.inputs = createInputCollection();
   var inputs = [];
+  readInputsFromAppState();
 
   var api = {
     getInputs,
@@ -20,7 +21,18 @@ export default function createInputsModel(ctx) {
   }
 
   function addInput(inputNumber) {
-    inputs.push(createInputElementViewModel(ctx, inputNumber));
+    var vm = createInputElementViewModel(ctx, inputNumber);
+    inputs.push(vm);
+    return vm;
+  }
+
+  function readInputsFromAppState() {
+    var i0 = appState.getQS().get('i0');
+    if (i0) {
+      var vm = addInput(0);
+      vm.link = i0;
+      vm.updateBinding(/* immediate = */ true);
+    }
   }
 }
 
@@ -36,13 +48,17 @@ function createInputElementViewModel(ctx, inputNumber) {
 
   return input;
 
-  function updateBinding() {
+  function updateBinding(immediate) {
     if (pendingUpdate) {
       clearTimeout(pendingUpdate);
       pendingUpdate = null;
     }
 
-    pendingUpdate = setTimeout(setBinding, 300);
+    if (immediate) {
+      setBinding();
+    } else {
+      pendingUpdate = setTimeout(setBinding, 300);
+    }
   }
 
   function setBinding() {
