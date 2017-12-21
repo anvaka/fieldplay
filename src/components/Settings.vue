@@ -351,6 +351,7 @@ help-background = rgb(7, 12, 23);
     width: 100%;
     margin-left: 7px;
     &:focus {
+      outline-offset: 0;
       outline: none;
       border: 1px dashed;
       background: #13294f;
@@ -389,7 +390,8 @@ help-background = rgb(7, 12, 23);
 form.block {
   margin-top: 12px;
   padding-top: 10px;
-
+  display: flex;
+  flex-direction: column;
 }
 .vector-field {
   pre.error {

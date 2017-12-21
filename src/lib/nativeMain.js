@@ -29,7 +29,6 @@ function initVectorFieldApp(canvas) {
     window.webGLEnabled = true;
     var scene = initScene(gl);
     scene.start();
-    // TODO: too bad to plop stuff onto window?
     window.scene = scene;
   } else {
     window.webGLEnabled = false;
