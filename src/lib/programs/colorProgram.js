@@ -35,11 +35,13 @@ export default function colorProgram(ctx) {
   function listenToEvents() {
     bus.on('integration-timestep-changed', requestSpeedUpdate);
     bus.on('bbox-change', requestSpeedUpdate);
+    bus.on('refresh-speed', requestSpeedUpdate);
   }
 
   function dispose() {
     bus.off('integration-timestep-changed', requestSpeedUpdate);
     bus.off('bbox-change', requestSpeedUpdate);
+    bus.off('refresh-speed', requestSpeedUpdate);
     disposeTextures();
   }
 
