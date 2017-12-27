@@ -1,7 +1,5 @@
 /**
  * Various color modes.
- * 
- * TODO: This could be generalized by allowing custom color shader
  */
 export default {
   /**
@@ -17,5 +15,10 @@ export default {
   /**
    * Color of a particle depends on its velocity vector angle.
    */
-  ANGLE: 3
+  ANGLE: 3,
+
+  /**
+   * The color comes from a shader. WIP
+   */
+  CUSTOM: 4
 }

@@ -14,7 +14,6 @@ export default function updatePositionProgram(ctx) {
   var readTextures, writeTextures;
   var particleStateResolution;
   var updateProgram;
-  var uniformParticleColor = { r: 77/255, g: 188/255, b: 201/255, a: 1  };
   var readVelocity = makeReadProgram(ctx);
 
   // If someone needs to get vectors out from the GPU, they send a `vector-lines-request`
@@ -67,8 +66,7 @@ export default function updatePositionProgram(ctx) {
 
   function prepareToDraw(program) {
     var colorMode = ctx.colorMode;
-    if (colorMode === ColorMode.UNIFORM) gl.uniform4f(program.u_particle_color, uniformParticleColor.r, uniformParticleColor.g, uniformParticleColor.b, uniformParticleColor.a);
-    else if (colorMode === ColorMode.VELOCITY) readVelocity.setColorMinMax(program);
+    if (colorMode === ColorMode.VELOCITY) readVelocity.setColorMinMax(program);
 
     readTextures.bindTextures(gl, program);
   }
