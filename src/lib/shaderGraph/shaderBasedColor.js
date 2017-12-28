@@ -16,6 +16,7 @@ export default function shaderBasedColor(colorMode, vfCode) {
     return `
 uniform vec2 u_velocity_range;
 varying vec4 v_particle_color;
+
 ${udf.getDefines()}
 ${integrate.getDefines()}
 `
@@ -32,30 +33,37 @@ vec3 hsv2rgb(vec3 c) {
 
 ${udf.getFunctions()}
 ${integrate.getFunctions()}
+${getColorFunctionBody()}
 `
   }
 
-  function getMain() {
-    // TODO: This needs to be refactored. I don't like code duplication.
-    let setParticleColor;
+  function getColorFunctionBody() {
     if (colorMode === ColorModes.VELOCITY) {
-      setParticleColor = `
+      return `
+vec4 get_color(vec2 p) {
+  vec2 velocity = get_velocity(p);
   float speed = (length(velocity) - u_velocity_range[0])/(u_velocity_range[1] - u_velocity_range[0]);
-  v_particle_color = vec4(hsv2rgb(vec3(0.05 + (1. - speed) * 0.5, 0.9, 1.)), 1.0);
+  return vec4(hsv2rgb(vec3(0.05 + (1. - speed) * 0.5, 0.9, 1.)), 1.0);
+}
 `
-    } else if (colorMode === ColorModes.UNIFORM) {
-      //   var uniformParticleColor = { r: 77/255, g: 188/255, b: 201/255, a: 1  };
-      setParticleColor = 'v_particle_color = vec4(0.302, 0.737, 0.788, 1.);'
-    } else {
-      setParticleColor = `
-  float speed = (atan(velocity.y, velocity.x) + PI)/(2.0 * PI);
-  v_particle_color = vec4(hsv2rgb(vec3(speed, 0.9, 1.)), 1.0);
-`;
+    } 
+    if (colorMode === ColorModes.UNIFORM) {
+      return `
+vec4 get_color(vec2 p) {
+  return vec4(0.302, 0.737, 0.788, 1.);
+}
+`
     }
+    return ` 
+vec4 get_color(vec2 p) {
+  vec2 velocity = get_velocity(p);
+  float speed = (atan(velocity.y, velocity.x) + PI)/(2.0 * PI);
+  return vec4(hsv2rgb(vec3(speed, 0.9, 1.)), 1.0);
+}
+`;
+  }
 
-    return `
-vec2 velocity = get_velocity(v_particle_pos);
-${setParticleColor}
-`
+  function getMain() {
+    return `  v_particle_color = get_color(v_particle_pos);`
   }
 }
