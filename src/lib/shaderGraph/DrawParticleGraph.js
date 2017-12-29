@@ -3,8 +3,9 @@ import shaderBasedColor from './shaderBasedColor';
 
 // TODO: this duplicates code from texture position.
 export default class DrawParticleGraph {
-  constructor(colorMode) {
-    this.colorMode = colorMode;
+  constructor(ctx) {
+    this.colorMode = ctx.colorMode;
+    this.colorFunction = ctx.colorFunction || '';
   }
 
   getFragmentShader() {
@@ -17,7 +18,7 @@ void main() {
 
   getVertexShader(vfCode) {
     let decodePositions = textureBasedPosition();
-    let colorParts = shaderBasedColor(this.colorMode, vfCode);
+    let colorParts = shaderBasedColor(this.colorMode, vfCode, this.colorFunction);
     let methods = []
     addMethods(decodePositions, methods);
     addMethods(colorParts, methods);
@@ -32,7 +33,7 @@ uniform vec2 u_min;
 uniform vec2 u_max;
 
 ${decodePositions.getVariables() || ''}
-${colorParts.getVariables() || ''}
+${colorParts.getVariables()}
 
 ${decodeFloatRGBA}
 
