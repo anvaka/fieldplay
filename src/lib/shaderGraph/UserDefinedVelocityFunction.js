@@ -29,6 +29,13 @@ ${getInputUniforms()}
   // TODO: Do I need to worry about "glsl injection" (i.e. is there potential for security attack?)
   // TODO: Do I need to inject snoise only when it's used?
     return `
+    // pseudo-random generator
+const vec3 rand_constants = vec3(12.9898, 78.233, 4375.85453);
+float rand(const vec2 co) {
+    float t = dot(rand_constants.xy, co);
+    return fract(sin(t) * (rand_constants.z + t));
+}
+
 ${snoise}
 
 vec2 rotate(vec2 p,float a) {
