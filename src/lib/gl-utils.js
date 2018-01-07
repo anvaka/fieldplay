@@ -74,7 +74,7 @@ function createProgram(gl, vertexSource, fragmentSource) {
 
   var wrapper = {
     program: program,
-    unload
+    unload: unload
   };
 
   var numAttributes = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
