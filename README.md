@@ -16,7 +16,7 @@ we have an arrow, pointing to the right:
 
 ![Vector field V(1, 0)](https://github.com/anvaka/fieldplay/wiki/images/field_1_0.png)
 
-Let's pretend these vectors represent velocity. What if we drop a thousand particles onto 
+Let's pretend these vectors represent velocity. What if we drop a thousand particles onto
 this grid? How would they move?
 
 ![Moving particles in V(1, 0)](https://github.com/anvaka/fieldplay/wiki/images/field_1_0_move.gif)
@@ -24,7 +24,7 @@ this grid? How would they move?
 When we assigned a vector to each point on the plain, we created a mathematical structure
 called `Vector Field`.
 
-Let's create a bit more interesting vector field: 
+Let's create a bit more interesting vector field:
 
 * Points with even `y` coordinate get vector `(1, 0)`;
 * Points with odd `y` coordinate get an opposite vector `(-1, 0)`;
@@ -43,7 +43,7 @@ v.y = 0.0;
 ```
 
 The remainder after integer division `y/2` can be either `1` or `0`.
-Then we transform the remainder, so that the final vector is either `(-1, 0)` or `(1, 0)`. 
+Then we transform the remainder, so that the final vector is either `(-1, 0)` or `(1, 0)`.
 
 So far, we've used only one component of the velocity vector `v.x`. And particles
 moved only horizontally. Let's try to set both components and see what happens
@@ -69,12 +69,12 @@ Vladimir shows how to render up to a million particles at 60 frames per second, 
 
 I used almost the same technique with a few modifications:
 
-1. The vector field is defined in shader language with GLSL code, so that 
+1. The vector field is defined in shader language with GLSL code, so that
 mathematical formulas can be expressed in free form
 2. Position of a particle is computed with 4th order [Runge-Kutta method](https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods) on GPU
 3. Each dimension X and Y is computed independently, so that we can store positions more accurately
 4. Added pan/zoom with [panzoom](https://github.com/anvaka/panzoom) library
-5. The vector field definition is saved in the URL with [query-state](https://github.com/anvaka/query-state) 
+5. The vector field definition is saved in the URL with [query-state](https://github.com/anvaka/query-state)
 library. So that you can bookmark/share your vector fields easily
 
 ## GLSL code for vector field
@@ -129,7 +129,7 @@ on slow 3G mobile network, the difference between extra 90KB of code becomes pai
 So, how can we load the website faster?
 
 I am using [webpack vuejs template](https://github.com/vuejs-templates/webpack), and solution came
-almost trivial. I just needed to split library into chunks. 
+almost trivial. I just needed to split library into chunks.
 
 The main website's entry point would be my small WebGL renderer, which initializes the scene and
 kicks of download of vue.js immediately:
@@ -160,8 +160,8 @@ require.ensure('glsl-parser', () => {
 ```
 
 You might be wondering what happens when the parser is being loaded? Well, if there are no errors
-we immediately show the vector field on the screen. If there are errors, the browser would not 
-compile the shader, and the website visitors will not see informative error message until the 
+we immediately show the vector field on the screen. If there are errors, the browser would not
+compile the shader, and the website visitors will not see informative error message until the
 real GLSL parser is loaded.
 
 Was the split worth the effort?
@@ -191,7 +191,7 @@ If we do so, the GPU would still treat these numbers as colors:
 Luckily, we don't have to make this seemingly random images visible to the users. WebGL allows
 to render things onto "virtual" screens, called `frame buffers`.
 
-These virtual screens are just images (textures) in the video memory. With two textures we can 
+These virtual screens are just images (textures) in the video memory. With two textures we can
 trick GPU into solving math problems. On each frame the algorithm works like this:
 
 ```
@@ -239,9 +239,9 @@ were to obvious to let them be.
 
 ### How can we fix this?
 
-I didn't want to go the easiest path of enabling floating point textures. They are 
+I didn't want to go the easiest path of enabling floating point textures. They are
 [not as much widely supported](https://webglstats.com/search?query=OES_texture_float) as I'd like.
-Instead, I did what years of non-GPU programming told me not to do. 
+Instead, I did what years of non-GPU programming told me not to do.
 
 I decided to solve thousands of ordinary differential equations not just once per frame. But one time per each dimension.
 I'd pass an attribute to the shader, telling which dimension needs to be written as an output for this "draw" call:
@@ -291,6 +291,9 @@ The link holds all necessary information to restore vector field state (this is 
 If you'd like to record a video with a vector tool, please refer to [instructions in this
 file](https://github.com/anvaka/fieldplay/blob/master/ScreenRecording.md).
 
+## Auto Mode
+
+You can have it automatically shuffle through a variety of interesting fields by using the `auto` URL param, which specifies how long to hold each field. For instance `auto=30s` will show a field for 30 seconds and then move to the next one. [Give it a try](https://anvaka.github.io/fieldplay/?auto=30s)!
 
 # Local development
 

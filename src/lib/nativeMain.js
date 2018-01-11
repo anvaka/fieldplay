@@ -1,11 +1,12 @@
 /**
  * The main entry point to the application.
- * 
+ *
  * It is initialized immediately with webgl, and puts
  * vue.js app loading into the future.
  */
 import initScene from './scene';
 import bus from './bus';
+import { initAutoMode } from './autoMode';
 
 var canvas = document.getElementById('scene');
 // Canvas may not be available in test run
@@ -29,6 +30,7 @@ function initVectorFieldApp(canvas) {
     window.webGLEnabled = true;
     var scene = initScene(gl);
     scene.start();
+    initAutoMode(scene);
     // TODO: too bad to plop stuff onto window?
     window.scene = scene;
   } else {
