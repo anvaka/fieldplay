@@ -12,7 +12,7 @@
     <div v-if='webGLEnabled && !hideUI'>
       <vector-view v-if='vectorLinesEnabled'></vector-view>
       <ruler></ruler>
-      <a href='#' @click.prevent='aboutVisible = !aboutVisible' class='about-link'>about...</a>
+      <a href='#' @click.prevent='aboutVisible = !aboutVisible' class='about-link' title='click to learn more about this website'>about...</a>
       <div class='controls-container' :style='getControlsContainerStyle()' ref='controls'>
         <controls></controls>
         <settings :scene='scene'></settings>
@@ -128,12 +128,6 @@ export default {
   top: 0;
 }
 
-.no-webgl {
-  width: 100%;
-  color: hsla(215, 37%, 55%, 1);
-  flex-direction: column; text-align: center;
-  padding: 12px;
-}
 a {
   color: primary-text;
   text-decoration: none;
@@ -141,6 +135,12 @@ a {
 a.highlighted {
   color: white;
   border-bottom: 1px dashed white;
+}
+.no-webgl {
+  width: 100%;
+  color: hsla(215, 37%, 55%, 1);
+  flex-direction: column; text-align: center;
+  padding: 12px;
 }
 .no-webgl h4 {
   margin: 7px 0;

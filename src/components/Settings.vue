@@ -1,7 +1,7 @@
 <template>
   <div class='settings' :class='{collapsed: settingsPanel.collapsed}'>
     <div class='block vector-field'  v-if='vectorField'>
-      <div class='title'>Vector field <a class='reset-all' :class='{"syntax-visible": syntaxHelpVisible}' href='#' @click.prevent='syntaxHelpVisible = !syntaxHelpVisible'>syntax help</a></div>
+      <div class='title'>Vector field <a class='reset-all' :class='{"syntax-visible": syntaxHelpVisible}' href='#' @click.prevent='syntaxHelpVisible = !syntaxHelpVisible' title='click to learn more about syntax'>syntax help</a></div>
       <syntax v-if='syntaxHelpVisible' @close='syntaxHelpVisible = false'></syntax>
       <code-editor :model='vectorField'></code-editor>
     </div>
@@ -9,7 +9,7 @@
       <Inputs :vm='inputsModel'></Inputs>
     </div>
     <form class='block' @submit.prevent='onSubmit'>
-      <div class='title'>Settings<a class='reset-all' href='?'>reset all</a> </div>
+      <div class='title'>Settings<a class='reset-all' href='?' title='set default settings'>reset all</a> </div>
       <div class='row'>
         <div class='col'>Particle color</div>
         <div class='col full'> 
@@ -105,7 +105,7 @@
         </div>
         <div class='row'>
           <div class='col min-x'><input type='number' v-model.lazy='minX' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
-          <a class='col reset' href='#' @click.prevent='goToOrigin'>go to origin</a>
+          <a class='col reset' href='#' @click.prevent='goToOrigin' title='navigate to point (0,0)'>go to origin</a>
           <div class='col max-x'><input type='number' v-model.lazy='maxX' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
         </div>
         <div class='row center'>
