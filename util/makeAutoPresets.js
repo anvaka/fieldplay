@@ -14,7 +14,12 @@ const presets = [
   `name=Combination of two fields&dt=0.01&fo=0.998&dp=0.009&cm=1&cx=0.000300000000000189&cy=0&w=8.5404&h=8.5404&vf=%2F%2F%20p.x%20and%20p.y%20are%20current%20coordinates%0A%2F%2F%20v.x%20and%20v.y%20is%20a%20velocity%20at%20point%20p%0Avec2%20get_velocity%28vec2%20p%29%20%7B%0A%20%20vec2%20v%20%3D%20vec2%280.%2C%200.%29%3B%0A%0A%20%20%2F%2F%20change%20this%20to%20get%20a%20new%20vector%20field%0A%20%20vec2%20p1%20%3D%20p%20-%20vec2%28-2.%2C%200.%29%3B%0Avec2%20p2%20%3D%20p%20-%20cursor.zw%3B%0A%0Afloat%20l1%20%3D%20length%28p1%29%2C%20l2%20%3D%20length%28p2%29%3B%0A%0Av%20%3D%20vec2%28-p1.y%2C%20p1.x%29%2F%28l1%20*%20l1%29%20%2B%20vec2%28-p2.y%2C%20p2.x%29%2F%28l2%20*%20l2%29%3B%0A%0A%20%20return%20v%3B%0A%7D`
 ];
 
-const output = presets.map(presetString => {
+const keyMap = {
+  cm: 'colorMode',
+  vf: 'code'
+};
+
+let output = presets.map(presetString => {
   const parts = presetString.split('&');
   const preset = {};
   parts.forEach(part => {
@@ -27,10 +32,17 @@ const output = presets.map(presetString => {
       value = decodeURIComponent(value);
     }
 
-    preset[subparts[0]] = value;
+    let key = keyMap[subparts[0]] || subparts[0];
+    preset[key] = value;
   });
 
   return preset;
 });
 
-fs.writeFileSync('util/autoPresets.json', JSON.stringify(output, null, 2) + '\n');
+output = JSON.stringify(output, null, 2)
+  .replace(/"code": "(.*)"/g, function(match, capture) {
+    return '"code": `' + capture.replace(/\\n/g, '\n      ') + '`';
+  });
+
+output = 'export default ' + output + ';\n';
+fs.writeFileSync('util/autoPresets.js', output);

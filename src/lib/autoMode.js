@@ -1,6 +1,7 @@
 import appState from './appState';
+import presets from './autoPresets';
 
-let delayTime, incoming, scene, presets;
+let delayTime, incoming, scene;
 
 export function initAutoMode(_scene) {
   scene = _scene;
@@ -27,13 +28,7 @@ export function initAutoMode(_scene) {
   }
 
   delayTime = seconds * 1000;
-
-  getJSON('/static/autoPresets.json', function(data) {
-    presets = data;
-    setTimeout(next, delayTime);
-  }, function() {
-    console.error('unable to load auto presets file');
-  });
+  setTimeout(next, delayTime);
 }
 
 function next() {
@@ -43,44 +38,11 @@ function next() {
   }
 
   const preset = incoming.shift();
-  // console.warn(preset);
 
-  const code = decodeURIComponent(preset.vf);
-  scene.vectorFieldEditorState.setCode(code);
-  scene.setColorMode(preset.cm);
+  scene.vectorFieldEditorState.setCode(preset.code);
+  scene.setColorMode(preset.colorMode);
 
   // TODO: fo, dt, dp, cx, cy, w, h, pc, code
 
   setTimeout(next, delayTime);
-}
-
-// TODO: Does Vue have a utility like this built in?
-function getJSON(url, success, failure) {
-  const request = new XMLHttpRequest();
-  request.open('GET', url, true);
-
-  request.onload = function() {
-    if (request.status >= 200 && request.status < 400) {
-      let data;
-      try {
-        data = JSON.parse(request.responseText);
-      } catch (e) {
-        console.error(e);
-      }
-
-      if (data) {
-        success(data);
-      } else {
-        failure();
-      }
-    } else {
-      failure();
-    }
-  };
-
-  request.onerror = function() {
-    failure();
-  };
-
-  request.send();
 }
