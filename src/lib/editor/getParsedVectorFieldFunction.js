@@ -37,6 +37,7 @@ import {
   vec4 cursor;
   vec2 rotate(vec2 p,float a);
   float audio(float index);
+  float rand(const vec2 co);
   sampler2D input0;
   sampler2D input1;
 }`;

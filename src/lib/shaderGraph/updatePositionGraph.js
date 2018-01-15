@@ -68,12 +68,6 @@ uniform vec2 u_max;
     // TODO: Ideally this node should probably depend on
     // random number generator node, so that we don't duplicate code
     return `
-// pseudo-random generator
-const vec3 rand_constants = vec3(12.9898, 78.233, 4375.85453);
-float rand(const vec2 co) {
-    float t = dot(rand_constants.xy, co);
-    return fract(sin(t) * (rand_constants.z + t));
-}
 `
   }
 

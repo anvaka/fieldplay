@@ -1,38 +1,24 @@
 import decodeFloatRGBA from './parts/decodeFloatRGBA';
 import shaderBasedColor from './shaderBasedColor';
-import ColorModes from '../programs/colorModes';
 
 // TODO: this duplicates code from texture position.
 export default class DrawParticleGraph {
-  constructor(colorMode) {
-    this.colorMode = colorMode;
-    this.isUniformColor = (colorMode === ColorModes.UNIFORM);
+  constructor(ctx) {
+    this.colorMode = ctx.colorMode;
+    this.colorFunction = ctx.colorFunction || '';
   }
 
   getFragmentShader() {
-    let variables = [];
-    var mainBody = [];
-
-    if (this.isUniformColor) {
-      // uniform color comes via uniform setting
-      variables.push('uniform vec4 u_particle_color;');
-      mainBody.push('gl_FragColor = u_particle_color;');
-    } else {
-      // Otherwise it comes from a vertex shader
-      variables.push('varying vec4 v_particle_color;');
-      mainBody.push('gl_FragColor = v_particle_color;');
-    }
     return `precision highp float;
-${variables.join('\n')}
-
+varying vec4 v_particle_color;
 void main() {
-${mainBody.join('\n')}
+  gl_FragColor = v_particle_color;
 }`
   }
 
   getVertexShader(vfCode) {
     let decodePositions = textureBasedPosition();
-    let colorParts = this.isUniformColor ? uniformColor() : shaderBasedColor(this.colorMode, vfCode);
+    let colorParts = shaderBasedColor(this.colorMode, vfCode, this.colorFunction);
     let methods = []
     addMethods(decodePositions, methods);
     addMethods(colorParts, methods);
@@ -47,7 +33,7 @@ uniform vec2 u_min;
 uniform vec2 u_max;
 
 ${decodePositions.getVariables() || ''}
-${colorParts.getVariables() || ''}
+${colorParts.getVariables()}
 
 ${decodeFloatRGBA}
 
@@ -73,16 +59,10 @@ function addMethods(producer, array) {
     array.push(producer.getMethods());
   }
 }
+
 function addMain(producer, array) {
   if (producer.getMain) {
     array.push(producer.getMain());
-  }
-}
-
-function uniformColor() {
-  return {
-    getVariables() {},
-    getMain() {}
   }
 }
 

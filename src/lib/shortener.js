@@ -22,9 +22,9 @@ export default function shorten(link) {
 
     var req = new XMLHttpRequest();
 
-    req.addEventListener("error", transferFailed, false);
-    req.addEventListener("load", transferComplete, false);
-    req.addEventListener("abort", transferCanceled, false);
+    req.addEventListener('error', transferFailed, false);
+    req.addEventListener('load', transferComplete, false);
+    req.addEventListener('abort', transferCanceled, false);
     req.open('POST', endpoint);
     req.setRequestHeader('Content-type', 'application/json');
 

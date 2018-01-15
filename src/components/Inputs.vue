@@ -10,7 +10,7 @@
         Failed to load image.
       </div>
     </div>
-    <div v-if='canAddMore'><a href="#" @click.prevent='vm.addInput'>Add image</a></div>
+    <div v-if='canAddMore'><a href="#" @click.prevent='vm.addInput(0)'>Add image</a></div>
   </div>
 </template>
 

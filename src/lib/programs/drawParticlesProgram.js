@@ -45,8 +45,9 @@ export default function drawParticlesProgram(ctx) {
   function initDrawProgram() {
     if (drawProgram) drawProgram.unload();
 
-    const drawGraph = new DrawParticleGraph(ctx.colorMode);
-    drawProgram = util.createProgram(gl, drawGraph.getVertexShader(currentVectorField), drawGraph.getFragmentShader());
+    const drawGraph = new DrawParticleGraph(ctx);
+    const vertexShaderCode = drawGraph.getVertexShader(currentVectorField);
+    drawProgram = util.createProgram(gl, vertexShaderCode, drawGraph.getFragmentShader());
   }
 
   function updateParticlesPositions() {

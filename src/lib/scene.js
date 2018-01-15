@@ -70,6 +70,7 @@ export default function initScene(gl) {
     quadBuffer: util.createBuffer(gl, new Float32Array([0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1])),
 
     colorMode: appState.getColorMode(),
+    colorFunction: appState.getColorFunction(),
 
     // This defines texture unit for screen rendering. First few indices are taken by textures
     // that compute particles position/color

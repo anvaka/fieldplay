@@ -58,7 +58,10 @@ export default {
   setFadeout,
 
   getColorMode,
-  setColorMode
+  setColorMode,
+
+  getColorFunction,
+  setColorFunction
 }
 
 qs.onChange(function() {
@@ -74,6 +77,16 @@ function setColorMode(colorMode) {
   if (!defined(colorMode)) return;
   qs.set({cm: colorMode});
   currentState.cm = colorMode;
+}
+
+function getColorFunction() {
+  let colorFunction = qs.get('cf');
+  return colorFunction || '';
+}
+
+function setColorFunction(colorFunction) {
+  qs.set({cf: colorFunction});
+  currentState.cf = colorFunction;
 }
 
 function getFadeout() {
