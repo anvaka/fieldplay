@@ -1,15 +1,15 @@
 export default [
   {
     "name": "Behold",
-    "dt": 0.01,
-    "fo": 0.988,
-    "dp": 0.008,
+    "timeStep": 0.01,
+    "fadeOut": 0.988,
+    "dropProbability": 0.008,
     "colorMode": 2,
     "cx": -2.038350000000001,
     "cy": 0.1513,
     "w": 41.5779,
     "h": 41.5779,
-    "pc": 30000,
+    "particleCount": 30000,
     "code": `// p.x and p.y are current coordinates
       // v.x and v.y is a velocity at point p
       vec2 get_velocity(vec2 p) {
@@ -42,15 +42,15 @@ export default [
   },
   {
     "name": "Dynamic vector field by Evgeniy Andreev",
-    "dt": 0.01,
-    "fo": 0.998,
-    "dp": 0.009,
+    "timeStep": 0.01,
+    "fadeOut": 0.998,
+    "dropProbability": 0.009,
     "colorMode": 3,
     "cx": -1.6545999999999994,
     "cy": -0.3642500000000002,
     "w": 24.7354,
     "h": 24.7354,
-    "pc": 3000,
+    "particleCount": 3000,
     "code": `// p.x and p.y are current coordinates
       // v.x and v.y is a velocity at point p
       vec2 get_velocity(vec2 p) {
@@ -71,9 +71,9 @@ export default [
   },
   {
     "name": "Heart",
-    "dt": 0.01,
-    "fo": 0.998,
-    "dp": 0.009,
+    "timeStep": 0.01,
+    "fadeOut": 0.998,
+    "dropProbability": 0.009,
     "colorMode": 2,
     "cx": -1.424,
     "cy": 0.92285,
@@ -96,15 +96,15 @@ export default [
   },
   {
     "name": "A city block from a parallel Universe",
-    "dt": 0.01,
-    "fo": 0.988,
-    "dp": 0.008,
+    "timeStep": 0.01,
+    "fadeOut": 0.988,
+    "dropProbability": 0.008,
     "colorMode": 1,
     "cx": 0.6168999999999998,
     "cy": -1.87745,
     "w": 9.046199999999999,
     "h": 9.046199999999999,
-    "pc": 20000,
+    "particleCount": 20000,
     "code": `// p.x and p.y are current coordinates
       // v.x and v.y is a velocity at point p
       vec2 get_velocity(vec2 p) {
@@ -120,15 +120,15 @@ export default [
   },
   {
     "name": "Nice Symmetry",
-    "dt": 0.01,
-    "fo": 0.988,
-    "dp": 0.008,
+    "timeStep": 0.01,
+    "fadeOut": 0.988,
+    "dropProbability": 0.008,
     "colorMode": 2,
     "cx": -2.6373499999999996,
     "cy": -1.1419500000000014,
     "w": 46.512100000000004,
     "h": 46.512100000000004,
-    "pc": 20000,
+    "particleCount": 20000,
     "code": `// p.x and p.y are current coordinates
       // v.x and v.y is a velocity at point p
       vec2 get_velocity(vec2 p) {
@@ -144,9 +144,9 @@ export default [
   },
   {
     "name": "Combination of two fields",
-    "dt": 0.01,
-    "fo": 0.998,
-    "dp": 0.009,
+    "timeStep": 0.01,
+    "fadeOut": 0.998,
+    "dropProbability": 0.009,
     "colorMode": 1,
     "cx": 0.000300000000000189,
     "cy": 0,

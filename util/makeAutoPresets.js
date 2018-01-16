@@ -16,6 +16,10 @@ const presets = [
 
 const keyMap = {
   cm: 'colorMode',
+  dt: 'timeStep',
+  fo: 'fadeOut',
+  dp: 'dropProbability',
+  pc: 'particleCount',
   vf: 'code'
 };
 

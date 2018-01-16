@@ -40,9 +40,37 @@ function next() {
   const preset = incoming.shift();
 
   scene.vectorFieldEditorState.setCode(preset.code);
-  scene.setColorMode(preset.colorMode);
+
+  if (defined(preset.colorMode)) {
+    scene.setColorMode(preset.colorMode);
+  }
+
+  if (defined(preset.timeStep)) {
+    scene.setIntegrationTimeStep(preset.timeStep);
+  }
+
+  if (defined(preset.fadeOut)) {
+    scene.setFadeOutSpeed(preset.fadeOut);
+  }
+
+  if (defined(preset.dropProbability)) {
+    scene.setDropProbability(preset.dropProbability);
+  }
+
+  if (defined(preset.particleCount)) {
+    scene.setParticlesCount(preset.particleCount);
+  }
+
+  const bbox = appState.makeBBox(preset.cx, preset.cy, preset.w, preset.h);
+  if (bbox) {
+    scene.moveBoundingBox(bbox);
+  }
 
   // TODO: fo, dt, dp, cx, cy, w, h, pc, code
 
   setTimeout(next, delayTime);
+}
+
+function defined(number) {
+  return Number.isFinite(number);
 }
