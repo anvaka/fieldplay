@@ -2,7 +2,7 @@
   <div>
     <div class='title'>Inputs</div>
     <div class='input-border' v-for='input in inputs'>
-      <div class='col full'>
+      <div class='col'>
         <input type='text' class='link' placeholder="Enter link to image here" v-model='input.link' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" @change='input.updateBinding()'>
         <div class='label'>{{input.name}}</div>
       </div>

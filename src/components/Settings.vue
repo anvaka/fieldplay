@@ -1,4 +1,4 @@
-<template>
+template>
   <div class='settings' :class='{collapsed: settingsPanel.collapsed}'>
     <div class='block vector-field'  v-if='vectorField'>
       <div class='title'>Vector field <a class='reset-all' :class='{"syntax-visible": syntaxHelpVisible}' href='#' @click.prevent='syntaxHelpVisible = !syntaxHelpVisible' title='click to learn more about syntax'>syntax help</a></div>
@@ -12,7 +12,7 @@
       <div class='title'>Settings<a class='reset-all' href='?' title='set default settings'>reset all</a> </div>
       <div class='row'>
         <div class='col'>Particle color</div>
-        <div class='col full'> 
+        <div class='col'> 
           <select v-model='selectedColorMode' @change='changeColor'>
               <option value='1'>Uniform</option>
               <option value='2'>Velocity</option>
@@ -34,7 +34,7 @@
       </div>
       <div class='row' v-if='soundAvailable'>
         <div class='col'>SoundCloud track</div>
-        <div class='col full'>
+        <div class='col'>
           <input type='text' v-model='soundCloudLink'>
           <a href='#' @click.prevent='loadSound'>load</a>
         </div>
@@ -44,7 +44,7 @@
       </div>
       <div class='row'>
         <div class='col'>Particles count </div>
-        <div class='col full'><input type='number' :step='particleCountDelta' v-model='particlesCount' @keyup.enter='onSubmit' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
+        <div class='col'><input type='number' :step='particleCountDelta' v-model='particlesCount' @keyup.enter='onSubmit' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
         <help-icon @show='particleCountHelpVisible = !particleCountHelpVisible' :class='{open: particleCountHelpVisible}'></help-icon>
       </div>
       <div class='row help' v-if='particleCountHelpVisible'>
@@ -55,7 +55,7 @@
       </div>
       <div class='row'>
         <div class='col'>Fade out speed</div>
-        <div class='col full'><input type='number' :step='fadeoutDelta'  v-model='fadeOutSpeed' @keyup.enter='onSubmit' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
+        <div class='col'><input type='number' :step='fadeoutDelta'  v-model='fadeOutSpeed' @keyup.enter='onSubmit' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
         <help-icon @show='fadeoutDeltaHelp = !fadeoutDeltaHelp' :class='{open: fadeoutDeltaHelp}'></help-icon>
       </div>
       <div class='row help' v-if='fadeoutDeltaHelp'>
@@ -70,7 +70,7 @@
       </div>
       <div class='row'>
         <div class='col'>Particle reset probability</div>
-        <div class='col full'><input type='number' :step='resetProbabilityDelta'  v-model='dropProbability' @keyup.enter='onSubmit' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
+        <div class='col'><input type='number' :step='resetProbabilityDelta'  v-model='dropProbability' @keyup.enter='onSubmit' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
         <help-icon @show='resetProbabilityHelp = !resetProbabilityHelp' :class='{open: resetProbabilityHelp}'></help-icon>
       </div>
       <div class='row help' v-if='resetProbabilityHelp'>
@@ -85,7 +85,7 @@
       </div>
       <div class='row'>
         <div class='col'>Integration timestep</div>
-        <div class='col full'><input type='number' :step='integrationStepDelta' v-model='timeStep' @keyup.enter='onSubmit' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" ></div>
+        <div class='col'><input type='number' :step='integrationStepDelta' v-model='timeStep' @keyup.enter='onSubmit' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" ></div>
         <help-icon @show='integrationStepHelp = !integrationStepHelp' :class='{open: integrationStepHelp}'></help-icon>
       </div>
       <div class='row help' v-if='integrationStepHelp'>
