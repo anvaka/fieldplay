@@ -40,6 +40,7 @@ export default {
   settingsPanel,
   saveBBox,
   getBBox,
+  makeBBox,
   getQS() { return qs; },
   saveCode,
   getCode,
@@ -138,7 +139,10 @@ function getBBox() {
   let cy = qs.get('cy');
   let w = qs.get('w');
   let h = qs.get('h');
+  return makeBBox(cx, cy, w, h);
+}
 
+function makeBBox(cx, cy, w, h) {
   let bboxDefined = defined(cx) && defined(cy) && defined(w) && defined(h);
   if (!bboxDefined) return;
 
@@ -187,7 +191,7 @@ function saveReally(bbox) {
 function getCode() {
   var vfCode = qs.get('vf');
   if (vfCode) return vfCode;
-  
+
   // If we didn't get code yet, let's try read to read it from previous version
   // of the API.
   // TODO: Need to figure out how to develop this in backward/future compatible way.
