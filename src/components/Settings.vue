@@ -1,4 +1,4 @@
-template>
+<template>
   <div class='settings' :class='{collapsed: settingsPanel.collapsed}'>
     <div class='block vector-field'  v-if='vectorField'>
       <div class='title'>Vector field <a class='reset-all' :class='{"syntax-visible": syntaxHelpVisible}' href='#' @click.prevent='syntaxHelpVisible = !syntaxHelpVisible' title='click to learn more about syntax'>syntax help</a></div>
