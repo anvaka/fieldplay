@@ -1,7 +1,7 @@
 import appState from './appState';
 import presets from './autoPresets';
 
-let delayTime, incoming, scene;
+let delayTime, incomingPresetsQueue, scene, scheduledUpdate;
 
 export function initAutoMode(_scene) {
   scene = _scene;
@@ -11,33 +11,39 @@ export function initAutoMode(_scene) {
     return;
   }
 
-  if (!/s$/i.test(auto)) {
-    console.error('malformed auto param; missing seconds specifier');
-    return;
-  }
-
-  let seconds = parseFloat(auto.replace(/s$/i, ''));
-  if (Number.isNaN(seconds)) {
+  let parsedMilliseconds = parseInt(auto, 10);
+  if (Number.isNaN(parsedMilliseconds)) {
     console.error('malformed auto param; not a number');
     return;
   }
 
-  if (seconds <= 1) {
-    console.warn('auto param seconds too small; defaulting to 30');
-    seconds = 30;
+  if (parsedMilliseconds <= 500) {
+    console.warn('auto param is too small; defaulting to 30');
+    parsedMilliseconds = 30000;
   }
 
-  delayTime = seconds * 1000;
-  setTimeout(next, delayTime);
+  delayTime = parsedMilliseconds;
+  scheduledUpdate = setTimeout(next, delayTime);
+
+  // TODO: When user changes any argument of a field, we need to stop the mode.
+  // we could use `bus` here to listen for change events, and dispose.
+  return dispose;
+}
+
+function dispose() {
+  clearTimeout(scheduledUpdate);
+  scheduledUpdate = 0;
+  // TODO: When disposed we need to drop the `auto` argument from the query string.
+  // otherwise if people share it, they can unintentionally switch on auto mode
 }
 
 function next() {
-  if (!incoming || !incoming.length) {
+  if (!incomingPresetsQueue || !incomingPresetsQueue.length) {
     // TODO: shuffle
-    incoming = presets.slice();
+    incomingPresetsQueue = presets.slice();
   }
 
-  const preset = incoming.shift();
+  const preset = incomingPresetsQueue.shift();
 
   scene.vectorFieldEditorState.setCode(preset.code);
 
@@ -68,7 +74,7 @@ function next() {
 
   // TODO: fo, dt, dp, cx, cy, w, h, pc, code
 
-  setTimeout(next, delayTime);
+  scheduledUpdate = setTimeout(next, delayTime);
 }
 
 function defined(number) {

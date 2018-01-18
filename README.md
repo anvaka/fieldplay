@@ -293,7 +293,10 @@ file](https://github.com/anvaka/fieldplay/blob/master/ScreenRecording.md).
 
 ## Auto Mode
 
-You can have it automatically shuffle through a variety of interesting fields by using the `auto` URL param, which specifies how long to hold each field. For instance `auto=30s` will show a field for 30 seconds and then move to the next one. [Give it a try](https://anvaka.github.io/fieldplay/?auto=30s)!
+You can have it automatically shuffle through a variety of interesting fields by using the 
+`auto` URL param, which specifies how long to hold each field in milliseconds.
+For instance `auto=30000` will show a field for `30` seconds and then move to the next one. 
+[Give it a try](https://anvaka.github.io/fieldplay/?auto=30000)!
 
 # Local development
 
