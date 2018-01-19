@@ -18,7 +18,7 @@ export function initAutoMode(_scene) {
   }
 
   if (parsedMilliseconds <= 500) {
-    console.warn('auto param is too small; defaulting to 30');
+    console.warn('auto param is too small; defaulting to 30000');
     parsedMilliseconds = 30000;
   }
 
@@ -39,8 +39,7 @@ function dispose() {
 
 function next() {
   if (!incomingPresetsQueue || !incomingPresetsQueue.length) {
-    // TODO: shuffle
-    incomingPresetsQueue = presets.slice();
+    incomingPresetsQueue = shuffle(presets);
   }
 
   const preset = incomingPresetsQueue.shift();
@@ -69,12 +68,53 @@ function next() {
 
   const bbox = appState.makeBBox(preset.cx, preset.cy, preset.w, preset.h);
   if (bbox) {
-    scene.moveBoundingBox(bbox);
+    animateBBox(bbox);
   }
 
-  // TODO: fo, dt, dp, cx, cy, w, h, pc, code
-
   scheduledUpdate = setTimeout(next, delayTime);
+}
+
+function animateBBox(endBBox) {
+  const startBBox = Object.assign({}, scene.getBoundingBox());
+  const duration = 3000;
+  const startTime = Date.now();
+  const diffMinX = endBBox.minX - startBBox.minX;
+  const diffMaxX = endBBox.maxX - startBBox.maxX;
+  const diffMinY = endBBox.minY - startBBox.minY;
+  const diffMaxY = endBBox.maxY - startBBox.maxY;
+
+  const frame = function() {
+    const factor = (Date.now() - startTime) / duration;
+    if (factor >= 1) {
+      scene.applyBoundingBox(endBBox);
+      return;
+    }
+
+    requestAnimationFrame(frame);
+
+    const bbox = {
+      minX: startBBox.minX + (diffMinX * factor),
+      maxX: startBBox.maxX + (diffMaxX * factor),
+      minY: startBBox.minY + (diffMinY * factor),
+      maxY: startBBox.maxY + (diffMaxY * factor)
+    };
+
+    scene.applyBoundingBox(bbox);
+  };
+
+  frame();
+}
+
+function shuffle(inputArray) {
+  const outputArray = inputArray.slice();
+  for (let i = 0; i < outputArray.length; i++) {
+    const j = Math.floor(Math.random() * outputArray.length);
+    const temp = outputArray[i];
+    outputArray[i] = outputArray[j];
+    outputArray[j] = temp;
+  }
+
+  return outputArray;
 }
 
 function defined(number) {
