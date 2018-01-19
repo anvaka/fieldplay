@@ -395,7 +395,7 @@ dx2 = dx2/dl2;
 dy2 = dy2/dl2;
 
 float fx = cursor.xy.x - cursor.zw.x;
-float fy = cursor.xy.y - 
+float fy = cursor.xy.y -
 cursor.zw.y;
 float fl = sqrt(fx*fx+fy*fy);
 fx = -fx/fl;
@@ -671,5 +671,224 @@ vec2 get_velocity(vec2 p) {
   return v;
 }`,
     "particleCount": 30000
+  },
+  {
+    "name": "README 1",
+    "timeStep": 0.007,
+    "fadeOut": 0.998,
+    "dropProbability": 0.009,
+    "colorMode": 1,
+    "cx": -1.275949999999999,
+    "cy": -1.6277,
+    "w": 30.2937,
+    "h": 30.2937,
+    "code": `v.x = length(p)*min(sin(p.y),cos(p.x));
+v.y = cos((p.y+p.y));`
+  },
+  {
+    "name": "README 2",
+    "timeStep": 0.007,
+    "fadeOut": 0.998,
+    "dropProbability": 0.009,
+    "colorMode": 1,
+    "cx": -1.275949999999999,
+    "cy": -1.62765,
+    "w": 30.2937,
+    "h": 30.2937,
+    "code": `v.x = cos(p.y);
+v.y = cos(p.x);`
+  },
+  {
+    "name": "README 3",
+    "timeStep": 0.02,
+    "fadeOut": 0.998,
+    "dropProbability": 0.009,
+    "colorMode": 1,
+    "cx": 0.21419999999999995,
+    "cy": -0.7710999999999997,
+    "w": 55.970200000000006,
+    "h": 55.970200000000006,
+    "code": `v.x = min(sin(exp(p.x)),sin(length(p)));
+v.y = sin(p.x);`
+  },
+  {
+    "name": "README 4",
+    "timeStep": 0.02,
+    "fadeOut": 0.998,
+    "dropProbability": 0.009,
+    "colorMode": 1,
+    "cx": 2.43185,
+    "cy": -1.1695,
+    "w": 11.4385,
+    "h": 11.4385,
+    "code": `v.x = (p.y+cos(p.y));
+v.y = sin(min(length(p),log((p.y+p.x))*p.x));`
+  },
+  {
+    "name": "True Dipole",
+    "timeStep": 0.01,
+    "fadeOut": 0.998,
+    "dropProbability": 0.009,
+    "colorMode": 1,
+    "cx": 0,
+    "cy": 0,
+    "w": 8.5398,
+    "h": 8.5398,
+    "code": `float x = p.x;
+float y = p.y;
+
+// true dipole
+v.x = 2.0*x*y;
+v.y = y*y - x*x;`
+  },
+  {
+    "name": "Flow profile of a sphere",
+    "timeStep": 0.011,
+    "fadeOut": 0.99999,
+    "dropProbability": 0.009,
+    "colorMode": 1,
+    "cx": -0.7177000000000002,
+    "cy": -0.11769999999999992,
+    "w": 11.434999999999999,
+    "h": 11.434999999999999,
+    "code": `float x = p.x;
+float y = p.y;
+float r = sqrt(x*x+y*y);
+float sinth = y/r;
+float costh = x/r;
+float R = 1.;
+float Uinf = 1.;
+// radial flow
+float ur = Uinf*(1.-1.5*R/r+0.5*R*R*R/(r*r*r))*costh;
+// theta flow
+float uth = Uinf*(-1.+0.75*R/r+0.25*R*R*R/(r*r*r))*sinth;
+// to ux uy
+v.x = costh*ur-sinth*uth;
+v.y = sinth*ur+costh*uth;`,
+    "particleCount": 7000
+  },
+  {
+    "name": "Best vortex",
+    "colorMode": 2,
+    "cx": -6.158449999999998,
+    "cy": -0.9834499999999995,
+    "w": 96.8415,
+    "h": 96.8415,
+    "code": `float r = length(p);
+float theta = atan(p.y, p.x);
+v = vec2(p.y, -p.x) / r;
+float t = sqrt(r * 10.) + theta + frame * .02;
+v *= sin(t);
+v *= length(v) * 10.;
+v += p * .2;`,
+    "timeStep": 0.01,
+    "fadeOut": 0.9,
+    "dropProbability": 0.009,
+    "particleCount": 100000
+  },
+  {
+    "name": "Black hole",
+    "timeStep": 0.01,
+    "fadeOut": 0.998,
+    "dropProbability": 0.009,
+    "colorMode": 1,
+    "cx": -0.47934999999999994,
+    "cy": 0.3591500000000001,
+    "w": 8.5397,
+    "h": 8.5397,
+    "code": `float a = .1;
+float r2 = p.x * p.x + p.y * p.y;
+v = vec2(p.y, -p.x) / r2 - a * p;`
+  },
+  {
+    "name": "Julia set",
+    "timeStep": 0.004,
+    "fadeOut": 0.998,
+    "dropProbability": 0.009,
+    "colorMode": 1,
+    "cx": -0.40235,
+    "cy": -0.01795000000000002,
+    "w": 5.0845,
+    "h": 5.0845,
+    "code": `vec2 c = p;
+vec2 z = vec2(.4, .5);
+for (int i = 0; i < 8; i++) {
+   c = vec2(c.x * c.x - c.y * c.y, c.y * c.x + c.x * c.y);
+   c += z;
+}
+v = c;`,
+    "particleCount": 10000
+  },
+  {
+    "name": "Mandelbrot set",
+    "timeStep": 0.004,
+    "fadeOut": 0.998,
+    "dropProbability": 0.009,
+    "colorMode": 3,
+    "cx": -0.5678,
+    "cy": -0.07015000000000005,
+    "w": 4.9902,
+    "h": 4.9902,
+    "code": `vec2 z = p;
+for(int k=0; k<50; k++) {
+z = vec2(z.x * z.x - z.y * z.y, 2. * z.x * z.y) + p;
+}
+
+float mask = step(length(z), 2.);
+v.x = -p.y/length(p) * (0.5 - mask);
+v.y = p.x/length(p) * (0.5 - mask);`,
+    "particleCount": 30000
+  },
+  {
+    "name": "Reflecting pool",
+    "timeStep": 0.01,
+    "fadeOut": 0.998,
+    "dropProbability": 0.009,
+    "colorMode": 1,
+    "cx": 0,
+    "cy": 0,
+    "w": 8.5398,
+    "h": 8.5398,
+    "code": `v.x = sin(5.0*p.y + p.x);
+v.y = cos(5.0*p.x - p.y);`
+  },
+  {
+    "name": "Shear zone",
+    "timeStep": 0.01,
+    "fadeOut": 0.998,
+    "dropProbability": 0.009,
+    "colorMode": 1,
+    "cx": 0,
+    "cy": 0,
+    "w": 8.539734222673566,
+    "h": 8.539734222673566,
+    "code": `float r = length(p) - 1.5;
+float c = 1.0/(1.0+exp(-5.0*r));
+float vx1 = -p.y,  // circle
+      vy1 = p.x;
+float vx2 = 0.2*p.x+p.y, // spiral
+      vy2 = 0.2*p.y-p.x;
+v.x = c*vx1 + (1.0-c)*vx2;
+v.y = c*vy1 + (1.0-c)*vy2;`
+  },
+  {
+    "name": "Beautiful field",
+    "timeStep": 0.01,
+    "fadeOut": 0.998,
+    "dropProbability": 0.009,
+    "colorMode": 3,
+    "cx": -1.6564499999999995,
+    "cy": -0.36424999999999974,
+    "w": 24.7317,
+    "h": 24.7317,
+    "code": `float dt = 0.01;
+float t = frame*dt;
+float w = 2.*PI/5.;
+float A = 2.;
+
+float d = sqrt(p.x*p.x + p.y*p.y);
+v.x = A*cos(w*t/d);
+v.y = A*sin(w*t/d);`,
+    "particleCount": 3000
   }
 ];
