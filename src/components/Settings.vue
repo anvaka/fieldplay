@@ -356,6 +356,9 @@ help-background = rgb(7, 12, 23);
       border: 1px dashed;
       background: #13294f;
     }
+    &:invalid {
+      box-shadow:none;
+    }
   }
 }
 

@@ -131,7 +131,6 @@ float df(float x) {
   return (f(x+h)-f(x-h))/(2.*h);
 }
 
-
 vec2 get_velocity(vec2 p) {
   vec2 v = vec2(0., 0.);
 
