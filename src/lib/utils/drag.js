@@ -66,12 +66,13 @@ export default function createDrag(owner, onDrag) {
       e.stopPropagation();
       return false;
     }
-    injectWindowOverlay();
 
     // for IE, left click == 1
     // for Firefox, left click == 0
     const isLeftButton = ((e.button === 1 && window.event !== null) || e.button === 0);
     if (!isLeftButton) return;
+
+    injectWindowOverlay();
 
     mouseX = e.clientX;
     mouseY = e.clientY;
