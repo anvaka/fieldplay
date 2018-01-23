@@ -68,6 +68,19 @@ const presets = [
   { name: 'Beautiful field', params: `dt=0.01&fo=0.998&dp=0.009&cm=3&cx=-1.6564499999999995&cy=-0.36424999999999974&w=24.7317&h=24.7317&code=float%20dt%20%3D%200.01%3B%0Afloat%20t%20%3D%20frame*dt%3B%0Afloat%20w%20%3D%202.*PI%2F5.%3B%0Afloat%20A%20%3D%202.%3B%0A%0Afloat%20d%20%3D%20sqrt%28p.x*p.x%20%2B%20p.y*p.y%29%3B%0Av.x%20%3D%20A*cos%28w*t%2Fd%29%3B%0Av.y%20%3D%20A*sin%28w*t%2Fd%29%3B&pc=3000` }
 ];
 
+function wrapVectorField(field) {
+  return `// p.x and p.y are current coordinates
+// v.x and v.y is a velocity at point p
+vec2 get_velocity(vec2 p) {
+  vec2 v = vec2(0., 0.);
+
+  // change this to get a new vector field
+  ${field}
+
+  return v;
+}`
+}
+
 const keyMap = {
   cm: 'colorMode',
   dt: 'timeStep',
@@ -93,7 +106,12 @@ let output = presets.map(rawPreset => {
       value = decodeURIComponent(value);
     }
 
-    let key = keyMap[subparts[0]] || subparts[0];
+    let key = subparts[0];
+    if (key === 'code') {
+      value = wrapVectorField(value);
+    }
+
+    key = keyMap[key] || key;
     preset[key] = value;
   });
 
