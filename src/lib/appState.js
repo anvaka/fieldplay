@@ -2,6 +2,7 @@ import queryState from 'query-state';
 import bus from './bus';
 import ColorModes from './programs/colorModes';
 import wrapVectorField from './wrapVectorField';
+import isSmallScreen from './isSmallScreen';
 
 /**
  * The state of the fieldplay is stored in the query string. This is the
@@ -33,7 +34,7 @@ var defaults = {
 }
 
 let settingsPanel = {
-  collapsed: window.innerWidth < 600 ? true : false,
+  collapsed: isSmallScreen() ? true : false,
 };
 
 export default {
