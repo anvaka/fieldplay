@@ -34,7 +34,7 @@ var defaults = {
 }
 
 let settingsPanel = {
-  collapsed: isSmallScreen() ? true : false,
+  collapsed: isSmallScreen(),
 };
 
 export default {
