@@ -18,6 +18,15 @@ Did you forget to add a dot symbol? E.g. <span class='hl'>10</span> should be <s
 import bus from '../lib/bus';
 import { codemirror } from 'vue-codemirror-lite';
 var CodeMirror = require('codemirror/lib/codemirror.js')
+
+var toggleComment = require('codemirror/addon/comment/comment.js');
+function toggleGLSLComment(cm) {
+  cm.toggleComment({
+    indent: true,
+    lineComment: '//'
+  });
+}
+
 require('./glslmode')(CodeMirror);
 
 export default {
@@ -28,6 +37,10 @@ export default {
   },
   mounted() {
     bus.on('settings-collapsed', refreshEditor, this);
+    this.$refs.editor.editor.setOption('extraKeys', {
+      'Cmd-/': toggleGLSLComment,
+      'Ctrl-/': toggleGLSLComment
+    });
   },
   beforeDestroy() {
     bus.off('settings-collapsed', refreshEditor, this);
