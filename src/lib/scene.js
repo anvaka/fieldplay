@@ -129,6 +129,7 @@ export default function initScene(gl) {
 
     resetBoundingBox,
     moveBoundingBox,
+    applyBoundingBox,
 
     setPaused,
 

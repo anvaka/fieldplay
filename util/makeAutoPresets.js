@@ -39,8 +39,47 @@ const presets = [
 
   { name: 'Dynamic vector field by Evgeniy Andreev. Not defined by physical system, but beautiful.', params: `dt=0.01&fo=0.998&dp=0.009&cm=3&cx=-1.6564499999999995&cy=-0.36424999999999974&w=24.7317&h=24.7317&code=float%20dt%20%3D%200.01%3B%0Afloat%20t%20%3D%20frame*dt%3B%0Afloat%20w%20%3D%202.*PI%2F5.%3B%0Afloat%20A%20%3D%202.%3B%0A%0Afloat%20d%20%3D%20sqrt%28p.x*p.x%20%2B%20p.y*p.y%29%3B%0Av.x%20%3D%20A*cos%28w*t%2Fd%29%3B%0Av.y%20%3D%20A*sin%28w*t%2Fd%29%3B&pc=3000` },
 
-  { name: 'Behold (by /u/censored_username)', params: `dt=0.01&fo=0.988&dp=0.008&cm=2&cx=0.12704999999999966&cy=0.1923499999999998&w=22.5709&h=22.5709&code=float%20x%20%3D%20abs%28p.x%29%20-%205.%3B%0Afloat%20side%20%3D%20sign%28p.x%29%3B%0Afloat%20range%20%3D%20length%28vec2%28x%2C%20p.y%29%29%3B%0Afloat%20irisrange%20%3D%20length%28vec2%28x%2C%20p.y%20%2B%202.*sign%28p.y%29%29%29%3B%0A%0Avec2%20border%20%3D%201.*vec2%28p.y%20%2B%202.2*sign%28p.y%29%20*%20%28p.y*p.y%20%2F%20%28p.y*p.y%20%2B%200.01%29%29%2C%20-x%29%3B%0A%0Avec2%20outside%20%3D%20vec2%28x%20%2F%20%281.%2B10.%2Fabs%28p.x*p.x%29%29%2C%20p.y%29%3B%0A%0Avec2%20spiral%20%3D%20vec2%28p.y%2C%20-x%29%3B%0A%0Avec2%20iris%20%3D%20sin%28-range%20*%2010.%29%20*%20spiral%20%2B%200.05*vec2%28x%2C%20p.y%29%3B%0A%0Av%20%20%2B%3D%20outside%20*%20%28smoothstep%284.0%2C%204.5%2C%20irisrange%29%2Frange*5.%20-%205.*smoothstep%280.9%2C%200.7%2C%20range%29%2Frange%29%3B%0Av%20%2B%3D%20border%20*%20smoothstep%283.5%2C%204.%2C%20irisrange%29%20*%20smoothstep%284.5%2C%204.%2C%20irisrange%29%3B%0Av%20%2B%3D%20iris%20*%20smoothstep%282.0%2C%201.5%2C%20range%29%20*%20smoothstep%280.8%2C%201.%2C%20range%29%3B%0Av%20-%3D%2010.0*spiral%20*%20smoothstep%281.0%2C%200.8%2C%20range%29%20*%20smoothstep%280.7%2C%200.9%2C%20range%29%3B%0A%0Av.x%20*%3D%20side%3B%0Av%20*%3D%20-1.%3B&pc=30000` }
+  { name: 'Behold (by /u/censored_username)', params: `dt=0.01&fo=0.988&dp=0.008&cm=2&cx=0.12704999999999966&cy=0.1923499999999998&w=22.5709&h=22.5709&code=float%20x%20%3D%20abs%28p.x%29%20-%205.%3B%0Afloat%20side%20%3D%20sign%28p.x%29%3B%0Afloat%20range%20%3D%20length%28vec2%28x%2C%20p.y%29%29%3B%0Afloat%20irisrange%20%3D%20length%28vec2%28x%2C%20p.y%20%2B%202.*sign%28p.y%29%29%29%3B%0A%0Avec2%20border%20%3D%201.*vec2%28p.y%20%2B%202.2*sign%28p.y%29%20*%20%28p.y*p.y%20%2F%20%28p.y*p.y%20%2B%200.01%29%29%2C%20-x%29%3B%0A%0Avec2%20outside%20%3D%20vec2%28x%20%2F%20%281.%2B10.%2Fabs%28p.x*p.x%29%29%2C%20p.y%29%3B%0A%0Avec2%20spiral%20%3D%20vec2%28p.y%2C%20-x%29%3B%0A%0Avec2%20iris%20%3D%20sin%28-range%20*%2010.%29%20*%20spiral%20%2B%200.05*vec2%28x%2C%20p.y%29%3B%0A%0Av%20%20%2B%3D%20outside%20*%20%28smoothstep%284.0%2C%204.5%2C%20irisrange%29%2Frange*5.%20-%205.*smoothstep%280.9%2C%200.7%2C%20range%29%2Frange%29%3B%0Av%20%2B%3D%20border%20*%20smoothstep%283.5%2C%204.%2C%20irisrange%29%20*%20smoothstep%284.5%2C%204.%2C%20irisrange%29%3B%0Av%20%2B%3D%20iris%20*%20smoothstep%282.0%2C%201.5%2C%20range%29%20*%20smoothstep%280.8%2C%201.%2C%20range%29%3B%0Av%20-%3D%2010.0*spiral%20*%20smoothstep%281.0%2C%200.8%2C%20range%29%20*%20smoothstep%280.7%2C%200.9%2C%20range%29%3B%0A%0Av.x%20*%3D%20side%3B%0Av%20*%3D%20-1.%3B&pc=30000` },
+
+  { name: 'README 1', params: `dt=0.007&fo=0.998&dp=0.009&cm=1&cx=-1.275949999999999&cy=-1.6277&w=30.2937&h=30.2937&code=v.x%20%3D%20length%28p%29*min%28sin%28p.y%29%2Ccos%28p.x%29%29%3B%0Av.y%20%3D%20cos%28%28p.y%2Bp.y%29%29%3B%0A%20%20` },
+
+  { name: 'README 2', params: `dt=0.007&fo=0.998&dp=0.009&cm=1&cx=-1.275949999999999&cy=-1.62765&w=30.2937&h=30.2937&code=v.x%20%3D%20cos%28p.y%29%3B%0Av.y%20%3D%20cos%28p.x%29%3B%0A%20%20` },
+
+  { name: 'README 3', params: `dt=0.02&fo=0.998&dp=0.009&cm=1&cx=0.21419999999999995&cy=-0.7710999999999997&w=55.970200000000006&h=55.970200000000006&code=v.x%20%3D%20min%28sin%28exp%28p.x%29%29%2Csin%28length%28p%29%29%29%3B%0Av.y%20%3D%20sin%28p.x%29%3B%0A%20%20` },
+
+  { name: 'README 4', params: `dt=0.02&fo=0.998&dp=0.009&cm=1&cx=2.43185&cy=-1.1695&w=11.4385&h=11.4385&code=v.x%20%3D%20%28p.y%2Bcos%28p.y%29%29%3B%0Av.y%20%3D%20sin%28min%28length%28p%29%2Clog%28%28p.y%2Bp.x%29%29*p.x%29%29%3B%0A%20%20` },
+
+  { name: 'True Dipole', params: `dt=0.01&fo=0.998&dp=0.009&cm=1&cx=0&cy=0&w=8.5398&h=8.5398&code=float%20x%20%3D%20p.x%3B%0Afloat%20y%20%3D%20p.y%3B%0A%0A%2F%2F%20true%20dipole%0Av.x%20%3D%202.0*x*y%3B%0Av.y%20%3D%20y*y%20-%20x*x%3B` },
+
+  { name: 'Flow profile of a sphere', params: `dt=0.011&fo=0.99999&dp=0.009&cm=1&cx=-0.7177000000000002&cy=-0.11769999999999992&w=11.434999999999999&h=11.434999999999999&code=float%20x%20%3D%20p.x%3B%0Afloat%20y%20%3D%20p.y%3B%0Afloat%20r%20%3D%20sqrt%28x*x%2By*y%29%3B%0Afloat%20sinth%20%3D%20y%2Fr%3B%0Afloat%20costh%20%3D%20x%2Fr%3B%0Afloat%20R%20%3D%201.%3B%0Afloat%20Uinf%20%3D%201.%3B%0A%2F%2F%20radial%20flow%0Afloat%20ur%20%3D%20Uinf*%281.-1.5*R%2Fr%2B0.5*R*R*R%2F%28r*r*r%29%29*costh%3B%0A%2F%2F%20theta%20flow%0Afloat%20uth%20%3D%20Uinf*%28-1.%2B0.75*R%2Fr%2B0.25*R*R*R%2F%28r*r*r%29%29*sinth%3B%0A%2F%2F%20to%20ux%20uy%0Av.x%20%3D%20costh*ur-sinth*uth%3B%0Av.y%20%3D%20sinth*ur%2Bcosth*uth%3B&pc=7000` },
+
+  { name: 'Best vortex', params: `cm=2&cx=-6.158449999999998&cy=-0.9834499999999995&w=96.8415&h=96.8415&code=float%20r%20%3D%20length%28p%29%3B%0Afloat%20theta%20%3D%20atan%28p.y%2C%20p.x%29%3B%0Av%20%3D%20vec2%28p.y%2C%20-p.x%29%20%2F%20r%3B%0Afloat%20t%20%3D%20sqrt%28r%20*%2010.%29%20%2B%20theta%20%2B%20frame%20*%20.02%3B%0Av%20*%3D%20sin%28t%29%3B%0Av%20*%3D%20length%28v%29%20*%2010.%3B%0Av%20%2B%3D%20p%20*%20.2%3B&dt=0.01&fo=0.9&dp=0.009&pc=100000` },
+
+  { name: 'Black hole', params: `dt=0.01&fo=0.998&dp=0.009&cm=1&cx=-0.47934999999999994&cy=0.3591500000000001&w=8.5397&h=8.5397&code=float%20a%20%3D%20.1%3B%0Afloat%20r2%20%3D%20p.x%20*%20p.x%20%2B%20p.y%20*%20p.y%3B%0Av%20%3D%20vec2%28p.y%2C%20-p.x%29%20%2F%20r2%20-%20a%20*%20p%3B` },
+
+  { name: 'Julia set', params: `dt=0.004&fo=0.998&dp=0.009&cm=1&cx=-0.40235&cy=-0.01795000000000002&w=5.0845&h=5.0845&code=vec2%20c%20%3D%20p%3B%0Avec2%20z%20%3D%20vec2%28.4%2C%20.5%29%3B%0Afor%20%28int%20i%20%3D%200%3B%20i%20%3C%208%3B%20i%2B%2B%29%20%7B%0A%20%20%20c%20%3D%20vec2%28c.x%20*%20c.x%20-%20c.y%20*%20c.y%2C%20c.y%20*%20c.x%20%2B%20c.x%20*%20c.y%29%3B%0A%20%20%20c%20%2B%3D%20z%3B%0A%7D%0Av%20%3D%20c%3B%0A&pc=10000` },
+
+  { name: 'Mandelbrot set', params: `dt=0.004&fo=0.998&dp=0.009&cm=3&cx=-0.5678&cy=-0.07015000000000005&w=4.9902&h=4.9902&code=vec2%20z%20%3D%20p%3B%0Afor%28int%20k%3D0%3B%20k%3C50%3B%20k%2B%2B%29%20%7B%0Az%20%3D%20vec2%28z.x%20*%20z.x%20-%20z.y%20*%20z.y%2C%202.%20*%20z.x%20*%20z.y%29%20%2B%20p%3B%0A%7D%0A%0Afloat%20mask%20%3D%20step%28length%28z%29%2C%202.%29%3B%0Av.x%20%3D%20-p.y%2Flength%28p%29%20*%20%280.5%20-%20mask%29%3B%0Av.y%20%3D%20p.x%2Flength%28p%29%20*%20%280.5%20-%20mask%29%3B%0A%0A%0A&pc=30000` },
+
+  { name: 'Reflecting pool', params: `dt=0.01&fo=0.998&dp=0.009&cm=1&cx=0&cy=0&w=8.5398&h=8.5398&code=v.x%20%3D%20sin%285.0*p.y%20%2B%20p.x%29%3B%0Av.y%20%3D%20cos%285.0*p.x%20-%20p.y%29%3B` },
+
+  { name: 'Shear zone', params: `dt=0.01&fo=0.998&dp=0.009&cm=1&cx=0&cy=0&w=8.539734222673566&h=8.539734222673566&code=float%20r%20%3D%20length%28p%29%20-%201.5%3B%0Afloat%20c%20%3D%201.0%2F%281.0%2Bexp%28-5.0*r%29%29%3B%0Afloat%20vx1%20%3D%20-p.y%2C%20%20%2F%2F%20circle%0A%20%20%20%20%20%20vy1%20%3D%20p.x%3B%0Afloat%20vx2%20%3D%200.2*p.x%2Bp.y%2C%20%2F%2F%20spiral%0A%20%20%20%20%20%20vy2%20%3D%200.2*p.y-p.x%3B%0Av.x%20%3D%20c*vx1%20%2B%20%281.0-c%29*vx2%3B%0Av.y%20%3D%20c*vy1%20%2B%20%281.0-c%29*vy2%3B%0A%20%20` },
+
+  { name: 'Beautiful field', params: `dt=0.01&fo=0.998&dp=0.009&cm=3&cx=-1.6564499999999995&cy=-0.36424999999999974&w=24.7317&h=24.7317&code=float%20dt%20%3D%200.01%3B%0Afloat%20t%20%3D%20frame*dt%3B%0Afloat%20w%20%3D%202.*PI%2F5.%3B%0Afloat%20A%20%3D%202.%3B%0A%0Afloat%20d%20%3D%20sqrt%28p.x*p.x%20%2B%20p.y*p.y%29%3B%0Av.x%20%3D%20A*cos%28w*t%2Fd%29%3B%0Av.y%20%3D%20A*sin%28w*t%2Fd%29%3B&pc=3000` }
 ];
+
+function wrapVectorField(field) {
+  return `// p.x and p.y are current coordinates
+// v.x and v.y is a velocity at point p
+vec2 get_velocity(vec2 p) {
+  vec2 v = vec2(0., 0.);
+
+  // change this to get a new vector field
+  ${field}
+
+  return v;
+}`
+}
 
 const keyMap = {
   cm: 'colorMode',
@@ -67,7 +106,12 @@ let output = presets.map(rawPreset => {
       value = decodeURIComponent(value);
     }
 
-    let key = keyMap[subparts[0]] || subparts[0];
+    let key = subparts[0];
+    if (key === 'code') {
+      value = wrapVectorField(value);
+    }
+
+    key = keyMap[key] || key;
     preset[key] = value;
   });
 
@@ -76,7 +120,7 @@ let output = presets.map(rawPreset => {
 
 output = JSON.stringify(output, null, 2)
   .replace(/"code": "(.*)"/g, function(match, capture) {
-    return '"code": `' + capture.replace(/\\n/g, '\n      ') + '`';
+    return '"code": `' + capture.replace(/\\n/g, '\n') + '`';
   });
 
 output = 'export default ' + output + ';\n';
