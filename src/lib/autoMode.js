@@ -1,12 +1,23 @@
 import appState from './appState';
 import presets from './autoPresets';
+import generateFunction from './generate-equation';
+import wrapVectorField from './wrapVectorField';
 
-let delayTime, incomingPresetsQueue, scene, scheduledUpdate;
+let delayTime, incomingPresetsQueue, scene, scheduledUpdate, autoSource;
 
 export function initAutoMode(_scene) {
   scene = _scene;
 
   const qs = appState.getQS();
+
+  autoSource = qs.get('autosource');
+  if (!['presets', 'generator', 'both'].includes(autoSource)) {
+    if (autoSource) {
+      console.error('unknown autosource param; options are presets, generator, or both');
+    }
+
+    autoSource = 'both';
+  }
 
   let autoTime = qs.get('autotime');
   if (!autoTime) {
@@ -14,6 +25,8 @@ export function initAutoMode(_scene) {
     if (!autoTime) {
       return;
     }
+
+    console.warn('the auto param is deprecated; please use autotime');
   }
 
   let parsedMilliseconds = parseFloat(autoTime);
@@ -53,40 +66,49 @@ function dispose() {
 }
 
 function next() {
-  if (!incomingPresetsQueue || !incomingPresetsQueue.length) {
-    incomingPresetsQueue = shuffle(presets);
+  let source = autoSource;
+  if (source === 'both') {
+    source = Math.random() < 0.5 ? 'presets' : 'generator';
   }
 
-  const preset = incomingPresetsQueue.shift();
+  if (source === 'generator') {
+    scene.vectorFieldEditorState.setCode(wrapVectorField(generateFunction()));
+  } else if (source === 'presets') {
+    if (!incomingPresetsQueue || !incomingPresetsQueue.length) {
+      incomingPresetsQueue = shuffle(presets);
+    }
 
-  scene.vectorFieldEditorState.setCode(preset.code);
+    const preset = incomingPresetsQueue.shift();
 
-  if (defined(preset.colorMode)) {
-    scene.setColorMode(preset.colorMode);
+    scene.vectorFieldEditorState.setCode(preset.code);
+
+    if (defined(preset.colorMode)) {
+      scene.setColorMode(preset.colorMode);
+    }
+
+    if (defined(preset.timeStep)) {
+      scene.setIntegrationTimeStep(preset.timeStep);
+    }
+
+    if (defined(preset.fadeOut)) {
+      scene.setFadeOutSpeed(preset.fadeOut);
+    }
+
+    if (defined(preset.dropProbability)) {
+      scene.setDropProbability(preset.dropProbability);
+    }
+
+    if (defined(preset.particleCount)) {
+      scene.setParticlesCount(preset.particleCount);
+    }
+
+    const bbox = appState.makeBBox(preset.cx, preset.cy, preset.w, preset.h);
+    if (bbox) {
+      animateBBox(bbox);
+    }
+
+    // TODO: support these additional params: i0, showBindings
   }
-
-  if (defined(preset.timeStep)) {
-    scene.setIntegrationTimeStep(preset.timeStep);
-  }
-
-  if (defined(preset.fadeOut)) {
-    scene.setFadeOutSpeed(preset.fadeOut);
-  }
-
-  if (defined(preset.dropProbability)) {
-    scene.setDropProbability(preset.dropProbability);
-  }
-
-  if (defined(preset.particleCount)) {
-    scene.setParticlesCount(preset.particleCount);
-  }
-
-  const bbox = appState.makeBBox(preset.cx, preset.cy, preset.w, preset.h);
-  if (bbox) {
-    animateBBox(bbox);
-  }
-
-  // TODO: support these additional params: i0, showBindings
 
   scheduledUpdate = setTimeout(next, delayTime);
 }
