@@ -6,19 +6,34 @@ let delayTime, incomingPresetsQueue, scene, scheduledUpdate;
 export function initAutoMode(_scene) {
   scene = _scene;
 
-  const auto = appState.getQS().get('auto');
-  if (!auto) {
+  const qs = appState.getQS();
+
+  let autoTime = qs.get('autotime');
+  if (!autoTime) {
+    autoTime = qs.get('auto'); // Backwards compatibility
+    if (!autoTime) {
+      return;
+    }
+  }
+
+  let parsedMilliseconds = parseFloat(autoTime);
+  if (Number.isNaN(parsedMilliseconds)) {
+    console.error('malformed autotime param; not a number');
     return;
   }
 
-  let parsedMilliseconds = parseInt(auto, 10);
-  if (Number.isNaN(parsedMilliseconds)) {
-    console.error('malformed auto param; not a number');
-    return;
+  if (/ms$/i.test(autoTime)) {
+    // Already good
+  } else if (/s$/i.test(autoTime)) {
+    parsedMilliseconds *= 1000; // Convert from seconds
+  } else if (/m$/i.test(autoTime)) {
+    parsedMilliseconds *= 1000 * 60; // Convert from minutes
+  } else if (/h$/i.test(autoTime)) {
+    parsedMilliseconds *= 1000 * 60 * 60; // Convert from hours
   }
 
   if (parsedMilliseconds <= 500) {
-    console.warn('auto param is too small; defaulting to 30000');
+    console.warn('autotime param is too small; defaulting to 30 seconds');
     parsedMilliseconds = 30000;
   }
 
@@ -70,6 +85,8 @@ function next() {
   if (bbox) {
     animateBBox(bbox);
   }
+
+  // TODO: support these additional params: i0, showBindings
 
   scheduledUpdate = setTimeout(next, delayTime);
 }
