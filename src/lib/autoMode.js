@@ -1,29 +1,57 @@
 import appState from './appState';
 import presets from './autoPresets';
+import generateFunction from './generate-equation';
+import wrapVectorField from './wrapVectorField';
 
-let delayTime, incomingPresetsQueue, scene, scheduledUpdate;
+let delayTime, incomingPresetsQueue, scene, scheduledUpdate, autoSource;
 
 export function initAutoMode(_scene) {
   scene = _scene;
 
-  const auto = appState.getQS().get('auto');
-  if (!auto) {
+  const qs = appState.getQS();
+
+  autoSource = qs.get('autosource');
+  if (!['presets', 'generator', 'both'].includes(autoSource)) {
+    if (autoSource) {
+      console.error('unknown autosource param; options are presets, generator, or both');
+    }
+
+    autoSource = 'both';
+  }
+
+  let autoTime = qs.get('autotime');
+  if (!autoTime) {
+    autoTime = qs.get('auto'); // Backwards compatibility
+    if (!autoTime) {
+      return;
+    }
+
+    console.warn('the auto param is deprecated; please use autotime');
+  }
+
+  let parsedMilliseconds = parseFloat(autoTime);
+  if (Number.isNaN(parsedMilliseconds)) {
+    console.error('malformed autotime param; not a number');
     return;
   }
 
-  let parsedMilliseconds = parseInt(auto, 10);
-  if (Number.isNaN(parsedMilliseconds)) {
-    console.error('malformed auto param; not a number');
-    return;
+  if (/ms$/i.test(autoTime)) {
+    // Already good
+  } else if (/s$/i.test(autoTime)) {
+    parsedMilliseconds *= 1000; // Convert from seconds
+  } else if (/m$/i.test(autoTime)) {
+    parsedMilliseconds *= 1000 * 60; // Convert from minutes
+  } else if (/h$/i.test(autoTime)) {
+    parsedMilliseconds *= 1000 * 60 * 60; // Convert from hours
   }
 
   if (parsedMilliseconds <= 500) {
-    console.warn('auto param is too small; defaulting to 30000');
+    console.warn('autotime param is too small; defaulting to 30 seconds');
     parsedMilliseconds = 30000;
   }
 
   delayTime = parsedMilliseconds;
-  scheduledUpdate = setTimeout(next, delayTime);
+  next({ immediately: true });
 
   // TODO: When user changes any argument of a field, we need to stop the mode.
   // we could use `bus` here to listen for change events, and dispose.
@@ -37,38 +65,55 @@ function dispose() {
   // otherwise if people share it, they can unintentionally switch on auto mode
 }
 
-function next() {
-  if (!incomingPresetsQueue || !incomingPresetsQueue.length) {
-    incomingPresetsQueue = shuffle(presets);
+function next(options) {
+  options = options || {};
+
+  let source = autoSource;
+  if (source === 'both') {
+    source = Math.random() < 0.5 ? 'presets' : 'generator';
   }
 
-  const preset = incomingPresetsQueue.shift();
+  if (source === 'generator') {
+    scene.vectorFieldEditorState.setCode(wrapVectorField(generateFunction()));
+  } else if (source === 'presets') {
+    if (!incomingPresetsQueue || !incomingPresetsQueue.length) {
+      incomingPresetsQueue = shuffle(presets);
+    }
 
-  scene.vectorFieldEditorState.setCode(preset.code);
+    const preset = incomingPresetsQueue.shift();
 
-  if (defined(preset.colorMode)) {
-    scene.setColorMode(preset.colorMode);
-  }
+    scene.vectorFieldEditorState.setCode(preset.code);
 
-  if (defined(preset.timeStep)) {
-    scene.setIntegrationTimeStep(preset.timeStep);
-  }
+    if (defined(preset.colorMode)) {
+      scene.setColorMode(preset.colorMode);
+    }
 
-  if (defined(preset.fadeOut)) {
-    scene.setFadeOutSpeed(preset.fadeOut);
-  }
+    if (defined(preset.timeStep)) {
+      scene.setIntegrationTimeStep(preset.timeStep);
+    }
 
-  if (defined(preset.dropProbability)) {
-    scene.setDropProbability(preset.dropProbability);
-  }
+    if (defined(preset.fadeOut)) {
+      scene.setFadeOutSpeed(preset.fadeOut);
+    }
 
-  if (defined(preset.particleCount)) {
-    scene.setParticlesCount(preset.particleCount);
-  }
+    if (defined(preset.dropProbability)) {
+      scene.setDropProbability(preset.dropProbability);
+    }
 
-  const bbox = appState.makeBBox(preset.cx, preset.cy, preset.w, preset.h);
-  if (bbox) {
-    animateBBox(bbox);
+    if (defined(preset.particleCount)) {
+      scene.setParticlesCount(preset.particleCount);
+    }
+
+    const bbox = appState.makeBBox(preset.cx, preset.cy, preset.w, preset.h);
+    if (bbox) {
+      if (options.immediately) {
+        scene.applyBoundingBox(bbox);
+      } else {
+        animateBBox(bbox);
+      }
+    }
+
+    // TODO: support these additional params: i0, showBindings
   }
 
   scheduledUpdate = setTimeout(next, delayTime);
