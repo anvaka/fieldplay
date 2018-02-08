@@ -58,7 +58,7 @@ function SoundcloudLoader(player) {
           }
       });
     });
-  };
+  }
 
 
   this.directStream = function(direction){
@@ -80,7 +80,7 @@ function SoundcloudLoader(player) {
               else this.streamPlaylistIndex--;
           }
           if(this.streamPlaylistIndex>=0 && this.streamPlaylistIndex<=this.sound.track_count-1) {
-             this.player.setAttribute('src',this.streamUrl());
+             this.player.setAttribute('src', this.streamUrl());
              this.player.play();
           }
       }

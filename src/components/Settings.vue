@@ -367,11 +367,6 @@ help-background = rgb(7, 12, 23);
   margin-bottom: 7px;
   padding: 7px 7px 14px 7px;
   background: help-background;
-
-
-  .close {
-
-  }
 }
 .title {
   a {
