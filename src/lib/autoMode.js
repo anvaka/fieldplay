@@ -51,7 +51,7 @@ export function initAutoMode(_scene) {
   }
 
   delayTime = parsedMilliseconds;
-  scheduledUpdate = setTimeout(next, delayTime);
+  next({ immediately: true });
 
   // TODO: When user changes any argument of a field, we need to stop the mode.
   // we could use `bus` here to listen for change events, and dispose.
@@ -65,7 +65,9 @@ function dispose() {
   // otherwise if people share it, they can unintentionally switch on auto mode
 }
 
-function next() {
+function next(options) {
+  options = options || {};
+
   let source = autoSource;
   if (source === 'both') {
     source = Math.random() < 0.5 ? 'presets' : 'generator';
@@ -104,7 +106,11 @@ function next() {
 
     const bbox = appState.makeBBox(preset.cx, preset.cy, preset.w, preset.h);
     if (bbox) {
-      animateBBox(bbox);
+      if (options.immediately) {
+        scene.applyBoundingBox(bbox);
+      } else {
+        animateBBox(bbox);
+      }
     }
 
     // TODO: support these additional params: i0, showBindings
