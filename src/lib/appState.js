@@ -159,20 +159,7 @@ function makeBBox(cx, cy, w, h) {
 }
 
 function saveBBox(bbox, immediate = false) {
-  if(pendingSave) {
-    clearTimeout(pendingSave);
-    pendingSave = 0;
-  }
-
-  if (immediate) saveReally(bbox);
-  else {
-    pendingSave = setTimeout(() => saveReally(bbox), 300);
-  }
-}
-
-function saveReally(bbox) {
-  pendingSave = 0;
-  var bbox = {
+  bbox = {
     cx: (bbox.minX + bbox.maxX) * 0.5,
     cy: (bbox.minY + bbox.maxY) * 0.5,
     w: (bbox.maxX - bbox.minX),
@@ -181,12 +168,23 @@ function saveReally(bbox) {
 
   if (bbox.w <= 0 || bbox.h <= 0) return;
 
-  qs.set(bbox);
-
   currentState.cx = bbox.cx;
   currentState.cy = bbox.cy;
   currentState.w = bbox.w;
   currentState.h = bbox.h;
+
+  if(pendingSave) {
+    clearTimeout(pendingSave);
+    pendingSave = 0;
+  }
+
+  if (immediate) qs.set(bbox);
+  else {
+    pendingSave = setTimeout(() => {
+      pendingSave = 0;
+      qs.set(bbox);
+    }, 300);
+  }
 }
 
 function getCode() {

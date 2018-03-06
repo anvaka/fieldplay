@@ -437,7 +437,7 @@ export default function initScene(gl) {
   }
 
   function applyBoundingBox(boundingBox) {
-    appState.saveBBox(boundingBox, /* immediate = */ true);
+    appState.saveBBox(boundingBox);
     restoreBBox();
     // a hack to trigger panzoom event
     panzoom.moveBy(0, 0, false);
