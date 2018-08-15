@@ -74,7 +74,7 @@ function next(options) {
   }
 
   if (source === 'generator') {
-    scene.setParticleCount(10000);
+    scene.setParticlesCount(10000);
     scene.vectorFieldEditorState.setCode(wrapVectorField(generateFunction()));
   } else if (source === 'presets') {
     if (!incomingPresetsQueue || !incomingPresetsQueue.length) {
