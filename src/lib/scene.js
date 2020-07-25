@@ -353,8 +353,6 @@ export default function initScene(gl) {
 
   function initPanzoom() {
     let initializedPanzoom = makePanzoom(gl.canvas, {
-      realPinch: true,
-      zoomSpeed: 0.025,
       controller: wglPanZoom(gl.canvas, updateBoundingBox)
     });
 
