@@ -1,6 +1,6 @@
 # List of variables available to shader
 
-On top of standard [glsl functions](https://www.shaderific.com/glsl-functions), the following
+On top of standard [glsl functions](https://www.khronos.org/files/opengles_shading_language.pdf), the following
 list of variables can be used in velocity shader:
 
 * `float PI` -  3.1415926535897932384626433832795
