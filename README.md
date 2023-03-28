@@ -7,7 +7,7 @@ Vector fields explorer. Made with WebGL, love and passion.
 [![field 3](https://github.com/anvaka/fieldplay/wiki/images/field_3.png)](https://anvaka.github.io/fieldplay/?dt=0.02&fo=0.998&dp=0.009&cm=1&cx=0.21419999999999995&cy=-0.7710999999999997&w=55.970200000000006&h=55.970200000000006&code=v.x%20%3D%20min%28sin%28exp%28p.x%29%29%2Csin%28length%28p%29%29%29%3B%0Av.y%20%3D%20sin%28p.x%29%3B%0A%20%20)
 [![field 4](https://github.com/anvaka/fieldplay/wiki/images/field_4.png)](https://anvaka.github.io/fieldplay/?dt=0.02&fo=0.998&dp=0.009&cm=1&cx=2.43185&cy=-1.1695&w=11.4385&h=11.4385&code=v.x%20%3D%20%28p.y%2Bcos%28p.y%29%29%3B%0Av.y%20%3D%20sin%28min%28length%28p%29%2Clog%28%28p.y%2Bp.x%29%29*p.x%29%29%3B%0A%20%20)
 
-[more examples...](https://github.com/anvaka/fieldplay/blob/master/Awesome%20Fields.md)
+[more examples...](https://github.com/anvaka/fieldplay/blob/main/Awesome%20Fields.md)
 
 ## What?
 
@@ -264,7 +264,7 @@ We solve the same problem and throw away everything but `x` component of the sol
 It seemed crazy to me, as I thought this would kill performance. But even my low-end Android phone had no problems
 with this approach.
 
-The `encodeFloatRGBA()` uses all 32 bits to encode float as RGBA vector. I found [its implementation](https://github.com/anvaka/fieldplay/blob/master/src/lib/utils/floatPacking.js)
+The `encodeFloatRGBA()` uses all 32 bits to encode float as RGBA vector. I found [its implementation](https://github.com/anvaka/fieldplay/blob/main/src/lib/utils/floatPacking.js)
 somewhere on stackoverflow, and I'm not sure if it's the best possible way of packing
 (if you know better, please let me know).
 
@@ -275,7 +275,7 @@ The good news is that artifacts were gone:
 # Sharing
 
 Many times I was amazed by how beautiful some vector fields are. To encourage exploration I created a [very naive random vector field
-generator](https://github.com/anvaka/fieldplay/blob/master/src/lib/generate-equation.js). You can trigger it by pressing "Randomize" button.
+generator](https://github.com/anvaka/fieldplay/blob/main/src/lib/generate-equation.js). You can trigger it by pressing "Randomize" button.
 
 ![Generator](https://github.com/anvaka/fieldplay/wiki/images/generator_small.gif)
 
@@ -289,7 +289,7 @@ The link holds all necessary information to restore vector field state (this is 
 ## Video recording
 
 If you'd like to record a video with a vector tool, please refer to [instructions in this
-file](https://github.com/anvaka/fieldplay/blob/master/ScreenRecording.md).
+file](https://github.com/anvaka/fieldplay/blob/main/ScreenRecording.md).
 
 ## Auto Mode
 
@@ -315,7 +315,7 @@ npm run dev
 
 # License
 
-The project is released under the [MIT license](https://github.com/anvaka/fieldplay/blob/master/LICENSE).
+The project is released under the [MIT license](https://github.com/anvaka/fieldplay/blob/main/LICENSE).
 
 # Thanks!
 I learned a lot building this project. I hope you too liked this short voyage into world of vector fields, math and WebGL.
