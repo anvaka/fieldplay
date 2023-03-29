@@ -12,18 +12,6 @@
         </div>
         <div class='url'>
           <input type='text' v-model='enteredUrl' ref='urlInput' @focus='selectAll'>
-          <div class='shortener'>
-            <div v-if='shortenState === "canShorten"'>
-              <input type='checkbox' id='shortenURL' name='shorten' v-model='shouldShorten' @change='requestShorten'>
-              <label for='shortenURL'>Short URL</label>
-            </div>
-            <div v-if='shortenState === "shortening"'>
-              Shortening URL...
-            </div>
-            <div v-if='shortenState === "error"'>
-              Couldn't shorten :(
-            </div>
-          </div>
           <div class='hint'>You can also copy the link from your browser's address bar.</div>
         </div>
       </div>
@@ -32,7 +20,6 @@
 </template>
 
 <script>
-import shortener from '../lib/shortener';
 import bus from '../lib/bus';
 var providers = getProviders();
 
@@ -51,31 +38,13 @@ export default {
     return { 
       providers,
       isOpened: false,
-      shouldShorten: false,
       enteredUrl: getCurrentLink(false),
-      shortenState: 'canShorten'
     }
   },
   methods: {
     onKeyDown(e) {
       if (e.which === 27) { // ESCAPE
         this.isOpened = false;
-      }
-    },
-    requestShorten() {
-      if (isShortened(this.enteredUrl)) {
-        this.enteredUrl = getCurrentLink(false);
-        return;
-      }
-
-      if (this.shouldShorten) {
-        this.shortenState = 'shortening';
-        shortener(this.enteredUrl).then((shortUrl) => {
-          this.shortenState = 'canShorten';
-          this.enteredUrl = shortUrl;
-        }).catch(err => {
-          this.shortenState = 'error'
-        });
       }
     },
     getLink(providerName) {
@@ -97,8 +66,6 @@ export default {
           return;
       }
       this.isOpened = false;
-      this.shortenState = 'canShorten';
-      this.shouldShorten = false;
     },
     openDialog() {
       this.isOpened = true;
@@ -118,10 +85,6 @@ function getLink(providerName, currentLink) {
     case 'email': return `mailto:?body=${currentLink}`;
   }
   return '';
-}
-
-function isShortened(link) {
-  return link && link.indexOf('https://goo.gl') === 0;
 }
 
 function getCurrentLink(encode = true) {
@@ -212,10 +175,6 @@ function getProviders() {
           background: #13294f;
         }
       }
-      .shortener {
-        margin-top: 8px;
-        margin-bottom: 8px;
-      }
       .hint {
         margin-top: 14px;
         font-size: 12px;
@@ -235,9 +194,6 @@ function getProviders() {
     color: white;
     display: block;
   }
-}
-.shortener label {
-  user-select: none;
 }
 .logo {
   width: 48px;
