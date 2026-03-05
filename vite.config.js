@@ -9,5 +9,6 @@ export default defineConfig({
     extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue']
   },
   server: { port: 8880, open: true },
+  base: './',
   build: { outDir: 'dist', sourcemap: true }
 })
