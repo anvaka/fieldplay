@@ -1,22 +1,22 @@
 <template>
   <div class='ruler' :class='{highlighted: highlighted}'>
     <div class='horizontal tick-container'>
-      <div class='tick' v-for='tick in hticks' :style='{left: tick.offset}'>{{tick.label}}</div>
+      <div class='tick' v-for='(tick, i) in hticks' :key='i' :style='{left: tick.offset}'>{{tick.label}}</div>
     </div>
     <div class='vertical tick-container'>
-      <div class='tick' v-for='tick in vticks' :style='{top: tick.offset}'>{{tick.label}}</div>
+      <div class='tick' v-for='(tick, i) in vticks' :key='i' :style='{top: tick.offset}'>{{tick.label}}</div>
     </div>
   </div>
 </template>
 <script>
-import bus from '../lib/bus';
+import bus from '../lib/bus.js';
 
 export default {
   name: 'Ruler',
   mounted() {
     bus.on('bbox-change', this.recomputeLabels, this);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     bus.off('bbox-change', this.recomputeLabels, this);
   },
 

@@ -25,17 +25,17 @@
 </template>
 
 <script>
-import Controls from './components/Controls';
-import Ruler from './components/Ruler';
-import Settings from './components/Settings';
-import Share from './components/Share';
-import About from './components/About';
-import bus from './lib/bus';
-import isSmallScreen from './lib/isSmallScreen';
-import VectorView from './components/VectorView';
-import config from './lib/config';
+import Controls from './components/Controls.vue';
+import Ruler from './components/Ruler.vue';
+import Settings from './components/Settings.vue';
+import Share from './components/Share.vue';
+import About from './components/About.vue';
+import bus from './lib/bus.js';
+import isSmallScreen from './lib/isSmallScreen.js';
+import VectorView from './components/VectorView.vue';
+import config from './lib/config.js';
 import createDrag from './lib/utils/drag.js';
-import appState from './lib/appState';
+import appState from './lib/appState.js';
 
 const MIN_SETTINGS_WIDTH = 395;
 
@@ -52,7 +52,7 @@ export default {
       if (this.width < MIN_SETTINGS_WIDTH) this.width = MIN_SETTINGS_WIDTH;
     });
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.resizer.dispose();
     window.removeEventListener('resize', this.updateControlsStyle, true);
     if (this.scene) {
@@ -91,7 +91,7 @@ export default {
 }
 </script>
 
-<style lang='styl'>
+<style lang='stylus'>
 @import './components/shared.styl';
 
 #app {

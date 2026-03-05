@@ -21,12 +21,12 @@ var glslParser = {
 
 // glsl-parser is ~179KB uncompressed, we don't want to wait until it is downloaded.
 // So we load it asynchronously...
-require.ensure('glsl-parser', () => {
+import('glsl-parser').then(module => {
   // ... and replace the naive parser with the real one, when ready.
-  glslParser = require('glsl-parser');
+  glslParser = module.default || module;
 
   // notify interested parties, so that they can recheck code if they wish.
-  bus.fire('glsl-parser-ready'); 
+  bus.fire('glsl-parser-ready');
 });
 
 var vectorFieldGlobals = `

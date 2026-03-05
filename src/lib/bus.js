@@ -2,6 +2,6 @@
  * A simple message bus. Facilitates uncoupled communication between
  * components of fieldplay.
  */
-var eventify = require('ngraph.events');
+import eventify from 'ngraph.events'
 
-module.exports = eventify({});
+export default eventify({})

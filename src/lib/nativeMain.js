@@ -12,11 +12,8 @@ var canvas = document.getElementById('scene');
 // Canvas may not be available in test run
 if (canvas) initVectorFieldApp(canvas);
 
-// Tell webpack to split bundle, and download settings UI later.
-require.ensure('@/vueApp.js', () => {
-  // Settings UI is ready, initialize vue.js application
-  require('@/vueApp.js');
-});
+// Lazy load the Vue settings UI
+import('@/vueApp.js');
 
 function initVectorFieldApp(canvas) {
   canvas.width = window.innerWidth;
@@ -45,8 +42,8 @@ window.isRecording = false;
 
 function startRecord(url) {
   if (!CCapture) {
-    require.ensure('ccapture.js', () => {
-      CCapture = require('ccapture.js');
+    import('ccapture.js').then(module => {
+      CCapture = module.default || module;
       window.stopRecord = stopRecord;
       startRecord(url);
     });

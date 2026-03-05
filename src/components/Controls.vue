@@ -19,16 +19,16 @@
 </template>
 
 <script>
-import appState from '../lib/appState';
-import bus from '../lib/bus';
-import generateFunction from '../lib/generate-equation';
-import wrapVectorField from '../lib/wrapVectorField';
+import appState from '../lib/appState.js';
+import bus from '../lib/bus.js';
+import generateFunction from '../lib/generate-equation.js';
+import wrapVectorField from '../lib/wrapVectorField.js';
 
 export default {
   mounted() {
     document.body.addEventListener('keydown', this.onKeyDown, this);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     document.body.removeEventListener('keydown', this.onKeyDown, this);
   },
   data() {

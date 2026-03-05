@@ -1,25 +1,24 @@
 <template>
 <div>
-  <codemirror v-model='model.code' ref='editor' :options="{
-    viewportMargin: Infinity,
-    theme: 'glsl',
-    mode: 'glsl',
-  }"></codemirror>
+  <div ref="editorContainer"></div>
   <div class='error-container'>
     <pre v-if='model.error' class='error hl'>{{model.error}}</pre>
     <pre v-if='model.errorDetail' class='error detail'>{{model.errorDetail}}<span v-if='model.isFloatError'>
 Did you forget to add a dot symbol? E.g. <span class='hl'>10</span> should be <span class='hl'>10.</span> and <span class='hl'>42</span> should be <span class='hl'>42.</span>
 </span></pre>
-  </div> 
+  </div>
 </div>
 </template>
 
 <script>
-import bus from '../lib/bus';
-import { codemirror } from 'vue-codemirror-lite';
-var CodeMirror = require('codemirror/lib/codemirror.js')
+import bus from '../lib/bus.js';
+import CodeMirror from 'codemirror/lib/codemirror.js';
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/addon/comment/comment.js';
+import registerGlslMode from './glslmode';
 
-var toggleComment = require('codemirror/addon/comment/comment.js');
+registerGlslMode(CodeMirror);
+
 function toggleGLSLComment(cm) {
   cm.toggleComment({
     indent: true,
@@ -27,26 +26,39 @@ function toggleGLSLComment(cm) {
   });
 }
 
-require('./glslmode')(CodeMirror);
-
 export default {
   name: 'CodeEditor',
   props: ['model'],
-  components: {
-    codemirror
-  },
   mounted() {
-    bus.on('settings-collapsed', refreshEditor, this);
-    this.$refs.editor.editor.setOption('extraKeys', {
-      'Cmd-/': toggleGLSLComment,
-      'Ctrl-/': toggleGLSLComment
+    this.editor = CodeMirror(this.$refs.editorContainer, {
+      value: this.model.code || '',
+      viewportMargin: Infinity,
+      theme: 'glsl',
+      mode: 'glsl',
+      extraKeys: {
+        'Cmd-/': toggleGLSLComment,
+        'Ctrl-/': toggleGLSLComment
+      }
     });
+
+    this.editor.on('change', () => {
+      var newValue = this.editor.getValue();
+      if (newValue !== this.model.code) {
+        this.model.code = newValue;
+      }
+    });
+
+    bus.on('settings-collapsed', this.onSettingsCollapsed, this);
   },
-  beforeDestroy() {
-    bus.off('settings-collapsed', refreshEditor, this);
+  beforeUnmount() {
+    bus.off('settings-collapsed', this.onSettingsCollapsed, this);
   },
   watch: {
-    'model.code': function() {
+    'model.code': function(newVal) {
+      if (this.editor && newVal !== this.editor.getValue()) {
+        this.editor.setValue(newVal);
+      }
+
       if (this.pendingSetCode) {
         clearTimeout(this.pendingSetCode);
       }
@@ -58,15 +70,16 @@ export default {
         this.pendingSetCode = 0;
       }, 300);
     },
-  }
-}
-
-function refreshEditor(isCollapsed) {
-  // Code mirror sometimes is not visible https://stackoverflow.com/questions/8349571/codemirror-editor-is-not-loading-content-until-clicked
-  if (!isCollapsed) {
-    setTimeout(() => {
-      this.$refs.editor.editor.refresh()
-    }, 10);
+  },
+  methods: {
+    onSettingsCollapsed(isCollapsed) {
+      // Code mirror sometimes is not visible https://stackoverflow.com/questions/8349571/codemirror-editor-is-not-loading-content-until-clicked
+      if (!isCollapsed) {
+        setTimeout(() => {
+          this.editor.refresh();
+        }, 10);
+      }
+    }
   }
 }
 </script>

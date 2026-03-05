@@ -117,16 +117,16 @@
 </template>
 <script>
 // TODO: This file becomes too big. Need to split.
-import bus from '../lib/bus';
-import isSmallScreen from '../lib/isSmallScreen';
-import appState from '../lib/appState';
-import SoundLoader from '../lib/sound/soundLoader';
-import SoundCloudAudioSource from '../lib/sound/audioSource';
-import config from '../lib/config';
-import Syntax from './help/Syntax';
-import HelpIcon from './help/Icon';
-import CodeEditor from './CodeEditor';
-import Inputs from './Inputs';
+import bus from '../lib/bus.js';
+import isSmallScreen from '../lib/isSmallScreen.js';
+import appState from '../lib/appState.js';
+import SoundLoader from '../lib/sound/soundLoader.js';
+import SoundCloudAudioSource from '../lib/sound/audioSource.js';
+import config from '../lib/config.js';
+import Syntax from './help/Syntax.vue';
+import HelpIcon from './help/Icon.vue';
+import CodeEditor from './CodeEditor.vue';
+import Inputs from './Inputs.vue';
 
 // Temporary disable this until API is finished.
 const soundAvailable = config.isAudioEnabled;
@@ -146,7 +146,7 @@ export default {
 
     if (soundAvailable) this.soundLoader = new SoundLoader(this.$refs.player);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     bus.off('scene-ready', this.onSceneReady, this);
     bus.off('bbox-change', this.updateBBox, this);
   },

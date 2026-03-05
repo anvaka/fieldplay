@@ -4,7 +4,7 @@
  * 
  * This file provides glsl syntax highlight for code-mirror.
  */
-module.exports = function(CodeMirror) {
+export default function(CodeMirror) {
   CodeMirror.defineMode("glsl", function(config, parserConfig) {
     var indentUnit = config.indentUnit,
         keywords = parserConfig.keywords || words(glslKeywords),

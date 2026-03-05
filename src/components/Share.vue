@@ -6,7 +6,7 @@
         <h2>Share link</h2>
         <a href='#' @click.prevent='hide' class='close-btn close-modal' title='close'>x</a>
         <div class='providers'>
-          <a v-for='provider in providers' v-html='provider.svg' class='logo close-modal' :href='getLink(provider.name)' :style='{background: provider.color}'
+          <a v-for='provider in providers' :key='provider.name' v-html='provider.svg' class='logo close-modal' :href='getLink(provider.name)' :style='{background: provider.color}'
             target='_blank' :title='provider.name'>
           </a>
         </div>
@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import bus from '../lib/bus';
+import bus from '../lib/bus.js';
 var providers = getProviders();
 
 export default {
@@ -30,7 +30,7 @@ export default {
     this.lastCallTime = new Date();
     document.body.addEventListener('keydown', this.onKeyDown, this);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     bus.off('open-share-dialog', this.openDialog, this);
     document.body.removeEventListener('keydown', this.onKeyDown, this);
   },

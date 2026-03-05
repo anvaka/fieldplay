@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { Chrome } from 'vue-color';
+import { Chrome } from '@ckpack/vue-color';
 export default {
   name: 'ColorPicker',
   props: ['color'],

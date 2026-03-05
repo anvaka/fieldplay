@@ -1,3 +1,4 @@
+import { reactive } from 'vue';
 import bus from '../bus';
 import appState from '../appState';
 import getParsedVectorFieldFunction from './getParsedVectorFieldFunction';
@@ -21,7 +22,7 @@ export default function createVectorFieldEditorState(drawProgram) {
 
   loadCodeFromAppState();
 
-  var api = {
+  var api = reactive({
     getCode,
     setCode,
     dispose,
@@ -30,8 +31,8 @@ export default function createVectorFieldEditorState(drawProgram) {
     code: currentVectorFieldCode,
     error: '',
     errorDetail: '',
-    isFloatError: false 
-  };
+    isFloatError: false
+  });
 
   return api;
 

@@ -7,14 +7,14 @@
         </marker>
       </defs>
       <g>
-        <path v-for='vector in vectors' :d='getPath(vector)' stroke-width='1px' stroke='orange' marker-end="url(#arrow)" ></path>
+        <path v-for='(vector, i) in vectors' :key='i' :d='getPath(vector)' stroke-width='1px' stroke='orange' marker-end="url(#arrow)" ></path>
       </g>
     </svg>
   </div>
 </template>
 <script>
-import bus from '../lib/bus';
-import {encodeFloatRGBA} from '../lib/utils/floatPacking';
+import bus from '../lib/bus.js';
+import {encodeFloatRGBA} from '../lib/utils/floatPacking.js';
 
 export default {
   name: 'VectorView',
@@ -22,7 +22,7 @@ export default {
     bus.on('bbox-change', this.updateVectors, this);
     bus.on('vector-line-ready', this.drawComputedVectors, this);
   },
-  beforeDestroy() {
+  beforeUnmount() {
     bus.off('bbox-change', this.updateVectors, this)
     bus.off('vector-line-ready', this.drawComputedVectors, this);
   },
