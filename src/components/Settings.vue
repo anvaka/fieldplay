@@ -23,13 +23,13 @@
       </div>
       <div class='row help' v-if='selectedColorHelp'>
         <div>
-          <p>Defines background color for a vector field zone. Each particle entering into this zone wll be colored accordingly</p>
+          <p>Defines background color for a vector field zone. Each particle entering into this zone wll be colored accordingly.</p>
           <ul>
-            <li><i>Uniform color</i> gives all particles the same color</li>
+            <li><i>Uniform color</i> gives all particles the same color.</li>
             <li><i>Velocity color</i>  makes particles "hotter" if they move faster, and "colder" if they move slower. Notable exception is when you have singularities in field. Then all colors are the same.</li>
             <li><i>Angle color</i> highlights zones based on velocity vector angle.</li>
           </ul>
-          <p>Default value is "Uniform"</p>
+          <p>Default value is <b>Uniform</b>.</p>
         </div>
       </div>
       <div class='row' v-if='soundAvailable'>
@@ -50,22 +50,22 @@
       <div class='row help' v-if='particleCountHelpVisible'>
         <div>
           <p>How many particles should be visible inside bounding box? Higher values produce denser plots, smaller values are faster to compute.</p>
-          <p>Recommended value is between <b>10,000</b> and <b>100,000</b></p>
+          <p>Recommended value is between <b>10,000</b> and <b>100,000</b>.</p>
         </div>
       </div>
       <div class='row'>
-        <div class='col'>Fade out speed</div>
+        <div class='col'>Particle trace persistence</div>
         <div class='col'><input type='number' :step='fadeoutDelta'  v-model='fadeOutSpeed' @keyup.enter='onSubmit' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
         <help-icon @show='fadeoutDeltaHelp = !fadeoutDeltaHelp' :class='{open: fadeoutDeltaHelp}'></help-icon>
       </div>
       <div class='row help' v-if='fadeoutDeltaHelp'>
         <div>
-          <p>Before a particle is moved to the next position, we multiply its transparency by this number. This gives a fading out trace behind the particle</p>
+          <p>Before a particle is moved to the next position, we multiply its transparency by this number. This gives a fading out trace behind the particle.</p>
           <ul>
             <li>Setting this value to <b>1</b> will keep particle trace forever.</li>
-            <li> Setting this value to <b>0</b> will leave no trace at all</li>
+            <li>Setting this value to <b>0</b> will leave no trace at all.</li>
           </ul>
-          <p>Recommended value is <b>0.998</b></p>
+          <p>Recommended value is <b>0.998</b>.</p>
         </div>
       </div>
       <div class='row'>
@@ -80,7 +80,7 @@
             <li>Setting this value to <b>1</b> will reset all particles on every frame. This can be a good option to "reset" an empty screen.</li>
             <li>Setting this value to <b>0</b> will prevent particles from jumping to a random spot. This can be a good option to trace particles trajectory.</li>
           </ul>
-          <p>Default value is <b>0.009</b></p>
+          <p>Default value is <b>0.009</b>.</p>
         </div>
       </div>
       <div class='row'>
@@ -90,12 +90,12 @@
       </div>
       <div class='row help' v-if='integrationStepHelp'>
         <div>
-          <p>This parameter defines how fast time flies for each particle (or, to be more accurate, this is the integration step of the classical Runge-Kutta method)</p>
+          <p>This parameter defines how fast time flies for each particle (or, to be more accurate, this is the integration step of the classical Runge-Kutta method).</p>
           <ul>
             <li>Increasing this value makes particles fly faster at risk of missing proper curve's turns.</li>
             <li>Making this value smaller increases the accuracy of particle's trajectory, and makes them move slower.</li>
           </ul>
-          <p>Default value is <b>0.01</b></p>
+          <p>Default value is <b>0.01</b>.</p>
         </div>
       </div>
       <div class='bounding-box'>
